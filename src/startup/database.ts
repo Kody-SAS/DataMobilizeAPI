@@ -1,12 +1,8 @@
-import pg from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { PORT, POSTGRES_PASSWORD, POSTGRES_USER } from "./config";
+import { pool } from "./utils/db";
 
 export const connectToDatabase = async () => {
   try {
-    const pool = new pg.Pool({
-      connectionString: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${PORT}/asam`,
-    });
     pool.on("connect", () => {
       console.log(`[PostgreSQL]: connected`);
     });
