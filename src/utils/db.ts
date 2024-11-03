@@ -6,10 +6,15 @@ import {
   POSTGRES_PASSWORD,
   POSTGRES_PORT,
   POSTGRES_USER,
-} from "../config";
+} from "../startup/config";
 
 export const pool = new pg.Pool({
-  connectionString: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${POSTGRES_PORT}/${DATABASE}`,
+  host: HOST,
+  user: POSTGRES_USER,
+  password: POSTGRES_PASSWORD,
+  database: DATABASE,
+  port: parseInt(POSTGRES_PORT) || 5432,
+  connectionTimeoutMillis: 10000,
 });
 
 export const db = drizzle(pool);

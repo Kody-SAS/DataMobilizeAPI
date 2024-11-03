@@ -1,5 +1,5 @@
 import { drizzle } from "drizzle-orm/node-postgres";
-import { pool } from "./utils/db";
+import { pool } from "../utils/db";
 
 export const connectToDatabase = async () => {
   try {

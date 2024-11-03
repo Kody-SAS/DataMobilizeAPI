@@ -5,6 +5,7 @@ import {
   HOST,
   PORT,
   POSTGRES_PASSWORD,
+  POSTGRES_PORT,
   POSTGRES_USER,
 } from "./src/startup/config";
 export default defineConfig({
@@ -12,10 +13,10 @@ export default defineConfig({
   schema: "./src/db/schema",
   dialect: "postgresql",
   dbCredentials: {
-    url: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${PORT}/${DATABASE}`,
+    url: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${POSTGRES_PORT}/${DATABASE}`,
   },
   migrations: {
-    table: "my-migrations-table",
-    schema: "public",
+    table: "my-migrations-table", 
+    schema: "public", 
   },
 });
