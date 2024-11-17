@@ -4,14 +4,15 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "setup": "cp .env.example .env && drizzle-kit migrate && yarn install && yarn serve", 
+    "setup": "cp .env.example .env && yarn install && npx drizzle-kit generate && npx drizzle-kit migrate && npx drizzle-kit push && yarn serve",
     "serve": "nodemon index.ts",
     "test": "jest --watchAll --verbose --coverage",
-    "drizzle:migrate": "drizzle-kit migrate"
+    "drizzle:migrate": "npx drizzle-kit migrate"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@getbrevo/brevo": "^2.2.0",
     "@typegoose/typegoose": "^9.13.2",
     "@types/node": "^18.11.9",
     "@types/pg": "^8.11.10",
@@ -23,12 +24,16 @@
     "drizzle-orm": "^0.35.3",
     "express": "^4.18.2",
     "express-validator": "^6.14.2",
+    "i18next": "^23.16.5",
+    "i18next-fs-backend": "^2.3.2",
+    "i18next-http-middleware": "^3.6.0",
     "jsonwebtoken": "^9.0.2",
     "nodemon": "^2.0.20",
     "pg": "^8.13.1",
     "swagger-ui-express": "^4.6.3",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.3"
+    "typescript": "^4.9.3",
+    "uuid": "^11.0.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",

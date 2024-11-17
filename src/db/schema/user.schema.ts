@@ -1,11 +1,13 @@
-import { pgTable, varchar, integer } from "drizzle-orm/pg-core";
+import { boolean, pgTable, text, varchar } from "drizzle-orm/pg-core";
 import { timestamps } from "./helpers.schema";
+import { v7 as uuid } from "uuid";
 
 export const users = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  username: varchar({ length: 30 }).unique(),
-  email: varchar().unique().notNull(),
-  password: varchar().notNull(),
-  localisation: varchar({ length: 30 }),
+  id: text("id").$defaultFn(() => uuid()).primaryKey().notNull().unique(),
+  username: varchar("username", { length: 30 }),
+  email: varchar("email").unique().notNull(),
+  password: varchar("password").notNull(),
+  localisation: varchar("localisation", { length: 30 }),
+  isVerified: boolean("isVerified").default(false),
   ...timestamps,
 });
