@@ -78,6 +78,9 @@ const verify = async (req: Request, res: Response) => {
 
         await userService.updateOne(user);
 
+        // delete all user's related codes
+        await verificationService.deleteAllFromUser(userId);
+
         return res
           .status(ERROR_CODE.SUCCESS)
           .json({ message: "Verification successful" });
