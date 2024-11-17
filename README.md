@@ -8,6 +8,7 @@ This project contains a minimal start-up for a Node.js e-commerce project using 
 - Yarn
 
 ## Installation
+
 - Create a ```.env``` file using the template ```.env.example```
 - Install dependencies
 
@@ -27,8 +28,6 @@ Test the API with: `Postman`
 
 Swagger: `http://localhost:3010/api-docs/`  
 (Update the port number to match the one in `.env`)
-
-<br/>
 
 ## License
 
