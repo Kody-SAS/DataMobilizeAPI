@@ -1,13 +1,13 @@
-import { sql } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { users } from "../db/schema/user.schema";
 import { db } from "../utils/db";
-import { CreateUserInput } from "../dtos/user.dto";
+import { CreateUserInput, User } from "../dtos/user.dto";
 
 const getAll = async () => {
   return await db.select().from(users);
 };
 
-const getOne = async (id: number) => {
+const getOne = async (id: string): Promise<User> => {
   const user = await db
     .select()
     .from(users)
@@ -23,8 +23,21 @@ const getByUsername = async (username: string) => {
   return user.length > 0 ? user[0] : null;
 };
 
-const create = async (input: CreateUserInput) => {
-  return await db.insert(users).values(input).returning();
+const create = async (input: CreateUserInput) : Promise<User> => {
+  return await db.insert(users).values(input).returning()[0];
 };
 
-export default { getOne, getAll, create, getByUsername };
+/**
+ * Updates an existing user and returns the new one
+ * @param user User - data content to replace user with
+ * @returns Updated user
+ */
+const updateOne = async (user: User) : Promise<User> => {
+  return await db
+              .update(users)
+              .set(user)
+              .where(eq(users.id, user.id))
+              .returning()[0];
+}
+
+export default { getOne, getAll, create, getByUsername, updateOne };

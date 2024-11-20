@@ -11,6 +11,10 @@ export const ERROR_CODE = {
   // user
   USER_NOT_FOUND: 300,
   USER_INCORRECT_PASSWORD: 300,
+  USER_INCORRECT_CODE: 300,
+
+  // not found resource
+  NOT_FOUND: 404,
 
   // unknown error
   SERVER_ERROR: 500,

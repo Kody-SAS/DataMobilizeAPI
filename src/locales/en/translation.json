@@ -1,0 +1,6 @@
+{
+    "translation": {
+        "verifySubject": "Verify your account",
+        "verifyEmail": "Hello {{username}}, \nHere is your verification code {{code}}. We welcome you to the data mobilize family. \nBest regards"
+    }
+}
