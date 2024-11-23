@@ -3,6 +3,7 @@ import { users } from "../db/schema/user.schema";
 import { db } from "../utils/db";
 import { CreateUserInput } from "../dtos/user.dto";
 import { verifications } from "../db/schema/verification.schema";
+import { CreateVerificationInput, Verification } from "../dtos/verification.dto";
 
 /**
  * Gets the first verification code that corresponds to the user's id provided
@@ -19,6 +20,22 @@ const getOne = async (userId: string) => {
 
 
 /**
+ * Creates a verification object in database
+ * @param verificationInput CreateVerificationInput - DTO to create verification
+ * @returns verification code produced
+ */
+const create = async (verificationInput: CreateVerificationInput): Promise<Verification> => {
+  // we previously delete any data code from the user
+  await deleteAllFromUser(verificationInput.userId);
+  
+  return await db
+                .insert(verifications)
+                .values({userId: verificationInput.userId, code: verificationInput.code})
+                .returning()[0];
+}
+
+
+/**
  * Deletes all the verification codes from a particular user
  * @param userId string - provided user'id to be used
  */
@@ -28,4 +45,4 @@ const deleteAllFromUser = async (userId: string) => {
             .where(eq(verifications.userId, userId));
 }
 
-export default { getOne, deleteAllFromUser };
+export default { getOne, create, deleteAllFromUser };

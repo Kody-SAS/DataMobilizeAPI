@@ -7,6 +7,7 @@ import { ERROR_CODE } from "../utils/error_code";
 import { emailSender, sendSmtpEmail } from "../clients/email.client";
 import { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
+import { Verification } from "../dtos/verification.dto";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -23,8 +24,10 @@ const register = async (req: Request, res: Response) => {
 
     const code = Math.floor(Math.random() * 10000)
 
+    const verification: Verification = await verificationService.create({userId: user.id, code});
+
     sendSmtpEmail.subject = req.t("verification");
-    sendSmtpEmail.htmlContent = req.t("emailVerification", { username: user.username, code });
+    sendSmtpEmail.htmlContent = req.t("emailVerification", { username: user.username, code: verification.code });
     sendSmtpEmail.sender = { name: "Kody", email: KODY_NOREPLY_EMAIL };
     sendSmtpEmail.to = [
       { email: user.email, name: user.username }

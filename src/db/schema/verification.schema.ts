@@ -5,7 +5,7 @@ import { users } from "./user.schema";
 
 export const verifications = pgTable("verifications", {
   id: text("id").$defaultFn(() => uuid()).primaryKey().notNull().unique(),
-  userId: text("userId").references(() => users.id),
+  userId: text("userId").references(() => users.id).notNull(),
   code: integer("code").notNull(),
   ...timestamps,
 });
