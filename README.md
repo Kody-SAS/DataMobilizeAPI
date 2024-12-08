@@ -1,4 +1,4 @@
-# E-Commerce API
+# DataMobilize API
 
 This project contains a minimal start-up for a Node.js e-commerce project using Typescript, ESLint and Prettier.
 
