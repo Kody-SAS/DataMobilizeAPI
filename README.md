@@ -1,6 +1,6 @@
 # DataMobilize API
 
-This project contains a minimal start-up for a Node.js e-commerce project using Typescript, ESLint and Prettier.
+This project contains the api project to serve the DataMobilize mobile and web app.
 
 ## Prerequisites
 
