@@ -28,8 +28,9 @@ classDiagram
 
     class Report {
         -String reportID
-        -String issueType
-        -Location location
+        -String description
+        -String type
+        -Stirng localisation
         -Media media
         -Date timestamp
         +submitReport()
@@ -106,3 +107,4 @@ classDiagram
     APIIntegration --> Map : integrates data
 
     Admin --> APIIntegration : manages
+```
