@@ -4,5 +4,5 @@ export type Report = {
   type: any;
   localisation: string;
   media: any;
-  // userId: string;
+  userId: string;
 };

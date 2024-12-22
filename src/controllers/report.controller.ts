@@ -11,23 +11,21 @@ import userService from "../services/user.service";
  * @returns Created a report
  */
 const create = async (req: Request, res: Response) => {
-  const { type, description, localisation, media /*userId*/ }: Report =
-    req.body;
+  const { type, description, localisation, media }: Report = req.body;
   try {
-    // const user: any = await userService.getOne(userId);
-    // if (!user) {
-    //   return res
-    //     .status(ERROR_CODE.USER_NOT_FOUND)
-    //     .json({ message: "Login failed" });
-    // }
+    const user = await userService.getOne(req.params.userid);
+    if (!user) {
+      return res
+        .status(ERROR_CODE.USER_NOT_FOUND)
+        .json({ message: "User Not found" });
+    }
     const report = await reportService.create({
       type,
       localisation,
       description,
       media,
-      // userId: user.id,
+      userId: user.id,
     });
-    // user.reports.push(report.id);
     return res.json({ report });
   } catch (error) {
     return res.status(ERROR_CODE.SERVER_ERROR).json(error);
@@ -42,6 +40,12 @@ const create = async (req: Request, res: Response) => {
  */
 const findAll = async (req: Request, res: Response) => {
   try {
+    const user = await userService.getOne(req.params.userid);
+    if (!user) {
+      return res
+        .status(ERROR_CODE.USER_NOT_FOUND)
+        .json({ message: "User Not found" });
+    }
     const reports = await reportService.getAll();
     return res.json({ reports });
   } catch (error) {
@@ -57,6 +61,12 @@ const findAll = async (req: Request, res: Response) => {
  */
 const findOne = async (req: Request, res: Response) => {
   try {
+    const user = await userService.getOne(req.params.userid);
+    if (!user) {
+      return res
+        .status(ERROR_CODE.USER_NOT_FOUND)
+        .json({ message: "User Not found" });
+    }
     const report = await reportService.getOne(req.params.id);
     return res.json({ report });
   } catch (error) {
@@ -72,6 +82,12 @@ const findOne = async (req: Request, res: Response) => {
  */
 const deleteOne = async (req: Request, res: Response) => {
   try {
+    const user = await userService.getOne(req.params.userid);
+    if (!user) {
+      return res
+        .status(ERROR_CODE.USER_NOT_FOUND)
+        .json({ message: "User Not found" });
+    }
     await reportService.deleteReport(req.params.id);
     return res.json({ message: "The report has been deleted successfuly !" });
   } catch (error) {
@@ -88,11 +104,18 @@ const deleteOne = async (req: Request, res: Response) => {
 const updateOne = async (req: Request, res: Response) => {
   const { description, localisation, media, type }: Report = req.body;
   try {
+    const user = await userService.getOne(req.params.userid);
+    if (!user) {
+      return res
+        .status(ERROR_CODE.USER_NOT_FOUND)
+        .json({ message: "User Not found" });
+    }
     const report = await reportService.updateReport(req.params.id, {
       description,
       localisation,
       media,
       type,
+      userId: req.params.userId,
     });
     return res.json(report);
   } catch (error) {

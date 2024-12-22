@@ -20,6 +20,6 @@ export const reports = pgTable("reports", {
   type: issueTypeEnum("issueType").notNull(),
   localisation: varchar("localisation", { length: 255 }).notNull(),
   media: jsonb("media").notNull(),
-  // userId: text("userId").references(() => users.id),
+  userId: text("userId").references(() => users.id),
   ...timestamps,
 });
