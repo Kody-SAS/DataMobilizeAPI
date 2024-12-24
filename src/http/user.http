@@ -1,0 +1,49 @@
+### Get all users
+GET http://localhost:3010/users
+Content-Type: application/json
+
+###
+
+### Get a single user by ID
+GET http://localhost:3010/users/1
+Content-Type: application/json
+
+###
+
+### Create a new user
+POST http://localhost:3010/users/register
+Content-Type: application/json
+
+{
+    "username": "King",
+    "email": "mkeyk1n9@gmail.com",
+    "password": "password123",
+    "localisation": "en"
+}
+
+###
+
+### Verify a user
+POST http://localhost:3010/users/verify
+Content-Type: application/json
+
+{
+    "email": ""
+}
+
+###
+
+### Update a user by ID
+PUT http://localhost:3010/users/1
+Content-Type: application/json
+
+{
+    "name": "Jane Doe",
+    "email": "jane.doe@example.com"
+}
+
+###
+
+### Delete a user by ID
+DELETE http://localhost:3010/users/0193f43f-3b1e-76ec-bdf8-fefa5c3c6ff7
+Content-Type: application/json
