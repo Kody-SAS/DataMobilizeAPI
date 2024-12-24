@@ -1,6 +1,6 @@
-import { EMAIL_API_KEY } from "../startup/config";
+import { emailHttpClient, KODY_NOREPLY_EMAIL } from "../startup/config";
 
-export type emailSender = {
+export type emailPerson = {
     name: string;
     email: string;
 }
@@ -13,17 +13,19 @@ export type emailParam = {
 export type emailTransaction = {
     subject: string;
     htmlContent: string;
-    sender: emailSender;
-    to: emailSender[];
-    replyTo?: emailSender;
+    sender: emailPerson;
+    to: emailPerson[];
+    replyTo?: emailPerson;
     params?: emailParam
 }
-const brevo = require('@getbrevo/brevo');
-let emailSender = new brevo.TransactionalEmailsApi();
 
-let apiKey = emailSender.authentications['apiKey'];
-apiKey.apiKey = EMAIL_API_KEY;
+export const sendEmail = async (transaction: emailTransaction) => {
+    try {
 
-let sendSmtpEmail: emailTransaction = new brevo.SendSmtpEmail();
-
-export {emailSender, sendSmtpEmail}
+        await emailHttpClient.post("/", transaction);
+        console.log("Email sent successfully");
+    }
+    catch (error) {
+        console.error("Error sending email: ", error);
+    }
+}

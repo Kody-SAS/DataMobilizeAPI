@@ -12,10 +12,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@getbrevo/brevo": "^2.2.0",
     "@typegoose/typegoose": "^9.13.2",
     "@types/node": "^18.11.9",
     "@types/pg": "^8.11.10",
+    "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "cross-env": "^7.0.3",

@@ -13,4 +13,7 @@ export type User = {
   password: string;
   localisation: string;
   isVerified: boolean;
+  updated_at: Date;
+  created_at: Date;
+  deleted_at: Date;
 };

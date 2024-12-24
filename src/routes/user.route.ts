@@ -9,5 +9,7 @@ export const UserRoute = () => {
   router.post(`${prefix}/register`, userController.register);
   router.post(`${prefix}/login`, userController.login);
   router.post(`${prefix}/verify`, userController.verify);
+  router.delete(`${prefix}/:id`, userController.removeOne);
+  router.put(`${prefix}/:id`, userController.updateOne);
   return router;
 };
