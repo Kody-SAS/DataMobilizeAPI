@@ -4,10 +4,10 @@ import { CreateUserInput, User } from "../dtos/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { ERROR_CODE } from "../utils/error_code";
-import { emailSender, sendSmtpEmail } from "../clients/email.client";
-import { t } from "i18next";
+import i18next, { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { Verification } from "../dtos/verification.dto";
+import { sendEmail } from "../clients/email.client";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -18,32 +18,51 @@ const register = async (req: Request, res: Response) => {
       username,
       email,
       password,
-      localisation: req.language,
+      localisation: req.language ?? localisation ?? "fr",
       isVerified: false
     });
+    console.log("User created: " + user.id);
+    i18next.language = user.localisation;
 
-    const code = Math.floor(Math.random() * 10000)
+    let code = Math.floor(Math.random() * 10000)
 
+    // we make sure the code is 4 digits
+    while(code < 1000) {
+      code = Math.floor(Math.random() * 10000);
+    }
+
+    console.log("creating verification code: " + code);
     const verification: Verification = await verificationService.create({userId: user.id, code});
 
-    sendSmtpEmail.subject = req.t("verification");
-    sendSmtpEmail.htmlContent = req.t("emailVerification", { username: user.username, code: verification.code });
-    sendSmtpEmail.sender = { name: "Kody", email: KODY_NOREPLY_EMAIL };
-    sendSmtpEmail.to = [
-      { email: user.email, name: user.username }
-    ];
+    const sendSmtpEmail = {
+      subject: t("verification"),
+      htmlContent: t("emailVerification", { username: user.username, code: verification.code }),
+      sender: { name: "Kody", email: KODY_NOREPLY_EMAIL },
+      to: [
+        { email: user.email, name: user.username }
+      ]
+    };
+    console.log("Sending email to user: " + user.id);
+    await sendEmail(sendSmtpEmail);
 
-    await emailSender.sendTransacEmail(sendSmtpEmail);
-
-    return res.json({ user });
+    return res.json(
+      { 
+        id: user.id, 
+        username: user.username, 
+        email: user.email, 
+        isVerified: user.isVerified, 
+        localisation: user.localisation 
+      }
+    );
   } catch (error) {
+    console.log("Failed to register user with error: " + error);
     return res.status(ERROR_CODE.SERVER_ERROR).json(error);
   }
 };
 
 const login = async (req: Request, res: Response) => {
   try {
-    const user = await userService.getByUsername(req.body.username);
+    const user = await userService.getByEmail(req.body.email);
     if (!user) {
       return res
         .status(ERROR_CODE.USER_NOT_FOUND)
@@ -58,7 +77,15 @@ const login = async (req: Request, res: Response) => {
         .status(ERROR_CODE.USER_INCORRECT_PASSWORD)
         .json({ message: "Login failed" });
     }
-    return res.json({ user });
+    return res.json(
+      { 
+        id: user.id, 
+        username: user.username, 
+        email: user.email, 
+        isVerified: user.isVerified, 
+        localisation: user.localisation 
+      }
+    );
   } catch (error) {
     return res
       .status(ERROR_CODE.SERVER_ERROR)
@@ -79,14 +106,22 @@ const verify = async (req: Request, res: Response) => {
         // we update the verified user
         user.isVerified = true;
 
-        await userService.updateOne(user);
+        const updatedUser = await userService.updateOne(user);
 
         // delete all user's related codes
         await verificationService.deleteAllFromUser(userId);
 
         return res
           .status(ERROR_CODE.SUCCESS)
-          .json({ message: "Verification successful" });
+          .json(
+            { 
+              id: updatedUser.id, 
+              username: updatedUser.username, 
+              email: updatedUser.email, 
+              isVerified: updatedUser.isVerified, 
+              localisation: updatedUser.localisation 
+            }
+          );
       }
       else {
         return res
@@ -129,4 +164,37 @@ const findOne = async (req: Request, res: Response) => {
   }
 };
 
-export default { register, findAll, findOne, login, verify };
+const removeOne = async (req: Request, res: Response) => {
+  try {
+    await userService.deleteOne(req.params.id);
+    return res.json({ message: "User deleted" });
+  }
+  catch (error) {
+    return res
+      .status(ERROR_CODE.SERVER_ERROR)
+      .json({ message: "Failed to delete user: " + req.params.id });
+  }
+}
+
+const updateOne = async (req: Request, res: Response) => {
+  try {
+    const user: User = req.body;
+    const updatedUser = await userService.updateOne(user);
+    return res.json(
+      { 
+        id: updatedUser.id, 
+        username: updatedUser.username, 
+        email: updatedUser.email, 
+        isVerified: updatedUser.isVerified, 
+        localisation: updatedUser.localisation 
+      }
+    );
+  }
+  catch (error) {
+    return res
+      .status(ERROR_CODE.SERVER_ERROR)
+      .json({ message: "Failed to update user: " + req.body.id });
+  }
+}
+
+export default { register, findAll, findOne, login, verify, removeOne, updateOne };

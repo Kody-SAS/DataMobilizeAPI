@@ -2,6 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import { users } from "../db/schema/user.schema";
 import { db } from "../utils/db";
 import { CreateUserInput, User } from "../dtos/user.dto";
+import { verifications } from "../db/schema/verification.schema";
 import { reports } from "../db/schema/report.schema";
 import { transformData } from "../utils/helper";
 
@@ -29,8 +30,17 @@ const getByUsername = async (username: string) => {
   return user.length > 0 ? user[0] : null;
 };
 
-const create = async (input: CreateUserInput): Promise<User> => {
-  return await db.insert(users).values(input).returning()[0];
+const getByEmail = async (email: string) => {
+  const user = await db
+    .select()
+    .from(users)
+    .where(sql`${users.email} = ${email}`);
+  return user.length > 0 ? user[0] : null;
+}
+
+const create = async (input: CreateUserInput) : Promise<User> => {
+  const newUser = await db.insert(users).values(input).returning();
+  return newUser[0];
 };
 
 /**
@@ -46,4 +56,12 @@ const updateOne = async (user: User): Promise<User> => {
     .returning()[0];
 };
 
-export default { getOne, getAll, create, getByUsername, updateOne };
+const deleteOne = async (id: string) => {
+  // remove all verification codes from user
+  await db.delete(verifications).where(eq(verifications.userId, id));
+
+  // remove user
+  await db.delete(users).where(eq(users.id, id));
+}
+
+export default { getOne, getAll, create, getByUsername, getByEmail, updateOne, deleteOne };

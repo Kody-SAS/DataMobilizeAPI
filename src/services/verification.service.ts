@@ -26,12 +26,15 @@ const getOne = async (userId: string) => {
  */
 const create = async (verificationInput: CreateVerificationInput): Promise<Verification> => {
   // we previously delete any data code from the user
-  await deleteAllFromUser(verificationInput.userId);
+  await db
+    .delete(verifications)
+    .where(eq(verifications.userId, verificationInput.userId));
   
-  return await db
-                .insert(verifications)
-                .values({userId: verificationInput.userId, code: verificationInput.code})
-                .returning()[0];
+  const newCode = await db
+                    .insert(verifications)
+                    .values({userId: verificationInput.userId, code: verificationInput.code})
+                    .returning();
+  return newCode[0];
 }
 
 
