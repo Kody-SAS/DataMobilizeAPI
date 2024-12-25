@@ -12,6 +12,7 @@ import { sendEmail } from "../clients/email.client";
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
   const password = bcrypt.hashSync(req.body.password, 10);
+  
   try {
     // Register the user
     const user = await userService.create({
@@ -22,7 +23,7 @@ const register = async (req: Request, res: Response) => {
       isVerified: false
     });
     console.log("User created: " + user.id);
-    i18next.language = user.localisation;
+    req.i18n.changeLanguage(user.localisation);
 
     let code = Math.floor(Math.random() * 10000)
 
@@ -35,8 +36,8 @@ const register = async (req: Request, res: Response) => {
     const verification: Verification = await verificationService.create({userId: user.id, code});
 
     const sendSmtpEmail = {
-      subject: t("verification"),
-      htmlContent: t("emailVerification", { username: user.username, code: verification.code }),
+      subject: req.t("verifySubject"),
+      htmlContent: req.t("verifyEmail", { username: user.username, code: verification.code }),
       sender: { name: "Kody", email: KODY_NOREPLY_EMAIL },
       to: [
         { email: user.email, name: user.username }
