@@ -15,10 +15,7 @@ const getAll = async () => {
 };
 
 const getOne = async (id: string): Promise<User> => {
-  const user = await db
-    .select()
-    .from(users)
-    .where(sql`${users.id} = ${id}`);
+  const user = await db.select().from(users).where(eq(users.id, id));
   return user.length > 0 ? user[0] : null;
 };
 
@@ -31,14 +28,11 @@ const getByUsername = async (username: string) => {
 };
 
 const getByEmail = async (email: string) => {
-  const user = await db
-    .select()
-    .from(users)
-    .where(sql`${users.email} = ${email}`);
-  return user.length > 0 ? user[0] : null;
-}
+  const resp = await db.select().from(users).where(eq(users.email, email));
+  return resp.length > 0 ? resp[0] : null;
+};
 
-const create = async (input: CreateUserInput) : Promise<User> => {
+const create = async (input: CreateUserInput): Promise<User> => {
   const newUser = await db.insert(users).values(input).returning();
   return newUser[0];
 };
@@ -49,11 +43,12 @@ const create = async (input: CreateUserInput) : Promise<User> => {
  * @returns Updated user
  */
 const updateOne = async (user: User): Promise<User> => {
-  return await db
+  const resp = await db
     .update(users)
     .set(user)
     .where(eq(users.id, user.id))
-    .returning()[0];
+    .returning();
+  return resp.length > 0 ? resp[0] : null;
 };
 
 const deleteOne = async (id: string) => {
@@ -62,6 +57,14 @@ const deleteOne = async (id: string) => {
 
   // remove user
   await db.delete(users).where(eq(users.id, id));
-}
+};
 
-export default { getOne, getAll, create, getByUsername, getByEmail, updateOne, deleteOne };
+export default {
+  getOne,
+  getAll,
+  create,
+  getByUsername,
+  getByEmail,
+  updateOne,
+  deleteOne,
+};
