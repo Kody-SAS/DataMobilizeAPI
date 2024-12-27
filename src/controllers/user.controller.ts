@@ -12,7 +12,7 @@ import { sendEmail } from "../clients/email.client";
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
   const password = bcrypt.hashSync(req.body.password, 10);
-  
+
   try {
     // Register the user
     const user = await userService.create({
@@ -20,41 +20,43 @@ const register = async (req: Request, res: Response) => {
       email,
       password,
       localisation: req.language ?? localisation ?? "fr",
-      isVerified: false
+      isVerified: false,
     });
     console.log("User created: " + user.id);
     req.i18n.changeLanguage(user.localisation);
 
-    let code = Math.floor(Math.random() * 10000)
+    let code = Math.floor(Math.random() * 10000);
 
     // we make sure the code is 4 digits
-    while(code < 1000) {
+    while (code < 1000) {
       code = Math.floor(Math.random() * 10000);
     }
 
     console.log("creating verification code: " + code);
-    const verification: Verification = await verificationService.create({userId: user.id, code});
+    const verification: Verification = await verificationService.create({
+      userId: user.id,
+      code,
+    });
 
     const sendSmtpEmail = {
       subject: req.t("verifySubject"),
-      htmlContent: req.t("verifyEmail", { username: user.username, code: verification.code }),
+      htmlContent: req.t("verifyEmail", {
+        username: user.username,
+        code: verification.code,
+      }),
       sender: { name: "Kody", email: KODY_NOREPLY_EMAIL },
-      to: [
-        { email: user.email, name: user.username }
-      ]
+      to: [{ email: user.email, name: user.username }],
     };
     console.log("Sending email to user: " + user.id);
     await sendEmail(sendSmtpEmail);
 
-    return res.json(
-      { 
-        id: user.id, 
-        username: user.username, 
-        email: user.email, 
-        isVerified: user.isVerified, 
-        localisation: user.localisation 
-      }
-    );
+    return res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
+    });
   } catch (error) {
     console.log("Failed to register user with error: " + error);
     return res.status(ERROR_CODE.SERVER_ERROR).json(error);
@@ -78,15 +80,13 @@ const login = async (req: Request, res: Response) => {
         .status(ERROR_CODE.USER_INCORRECT_PASSWORD)
         .json({ message: "Login failed" });
     }
-    return res.json(
-      { 
-        id: user.id, 
-        username: user.username, 
-        email: user.email, 
-        isVerified: user.isVerified, 
-        localisation: user.localisation 
-      }
-    );
+    return res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
+    });
   } catch (error) {
     return res
       .status(ERROR_CODE.SERVER_ERROR)
@@ -96,13 +96,13 @@ const login = async (req: Request, res: Response) => {
 
 const verify = async (req: Request, res: Response) => {
   try {
-    const { userId, code } : {userId: string, code: string} = req.body;
+    const { code }: { code: number } = req.body;
 
-    const verification = await verificationService.getOne(userId);
+    const verification = await verificationService.getOne(req.params.userId);
 
     if (verification != null) {
-      if (verification.code.toString() === code) {
-        const user: User = await userService.getOne(userId);
+      if (parseInt(verification.code.toString()) === code) {
+        const user: User = await userService.getOne(req.params.userId);
 
         // we update the verified user
         user.isVerified = true;
@@ -110,38 +110,31 @@ const verify = async (req: Request, res: Response) => {
         const updatedUser = await userService.updateOne(user);
 
         // delete all user's related codes
-        await verificationService.deleteAllFromUser(userId);
+        await verificationService.deleteAllFromUser(req.params.userId);
 
-        return res
-          .status(ERROR_CODE.SUCCESS)
-          .json(
-            { 
-              id: updatedUser.id, 
-              username: updatedUser.username, 
-              email: updatedUser.email, 
-              isVerified: updatedUser.isVerified, 
-              localisation: updatedUser.localisation 
-            }
-          );
-      }
-      else {
+        return res.status(ERROR_CODE.SUCCESS).json({
+          id: updatedUser.id,
+          username: updatedUser.username,
+          email: updatedUser.email,
+          isVerified: updatedUser.isVerified,
+          localisation: updatedUser.localisation,
+        });
+      } else {
         return res
           .status(ERROR_CODE.USER_INCORRECT_CODE)
           .json({ message: "Verification code incorrect" });
       }
-    }
-    else {
+    } else {
       return res
         .status(ERROR_CODE.NOT_FOUND)
         .json({ message: "Verification code not found" });
     }
-  }
-  catch (error) {
+  } catch (error) {
     return res
       .status(ERROR_CODE.SERVER_ERROR)
       .json({ message: "Verification failed" });
   }
-}
+};
 
 const findAll = async (req: Request, res: Response) => {
   try {
@@ -169,33 +162,37 @@ const removeOne = async (req: Request, res: Response) => {
   try {
     await userService.deleteOne(req.params.id);
     return res.json({ message: "User deleted" });
-  }
-  catch (error) {
+  } catch (error) {
     return res
       .status(ERROR_CODE.SERVER_ERROR)
       .json({ message: "Failed to delete user: " + req.params.id });
   }
-}
+};
 
 const updateOne = async (req: Request, res: Response) => {
   try {
     const user: User = req.body;
     const updatedUser = await userService.updateOne(user);
-    return res.json(
-      { 
-        id: updatedUser.id, 
-        username: updatedUser.username, 
-        email: updatedUser.email, 
-        isVerified: updatedUser.isVerified, 
-        localisation: updatedUser.localisation 
-      }
-    );
-  }
-  catch (error) {
+    return res.json({
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      isVerified: updatedUser.isVerified,
+      localisation: updatedUser.localisation,
+    });
+  } catch (error) {
     return res
       .status(ERROR_CODE.SERVER_ERROR)
       .json({ message: "Failed to update user: " + req.body.id });
   }
-}
+};
 
-export default { register, findAll, findOne, login, verify, removeOne, updateOne };
+export default {
+  register,
+  findAll,
+  findOne,
+  login,
+  verify,
+  removeOne,
+  updateOne,
+};

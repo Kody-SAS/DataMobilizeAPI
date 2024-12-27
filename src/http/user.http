@@ -5,7 +5,7 @@ Content-Type: application/json
 ###
 
 ### Get a single user by ID
-GET http://localhost:3010/users/1
+GET  http://localhost:3010/users/0194036f-65c8-72a0-bd95-b56b1989444a
 Content-Type: application/json
 
 ###
@@ -15,20 +15,28 @@ POST http://localhost:3010/users/register
 Content-Type: application/json
 
 {
-    "username": "King",
-    "email": "mkeyk1n9@gmail.com",
+    "username": "Abba Sali Aboubakar Mamate",
+    "email": "abbasaliaboubakar@gmail.com",
     "password": "password123",
     "localisation": "en"
 }
 
-###
-
-### Verify a user
-POST http://localhost:3010/users/verify
+### Login a new user
+POST http://localhost:3010/users/login
 Content-Type: application/json
 
 {
-    "email": ""
+    "email": "abbasaliaboubakar@gmail.com",
+    "password": "password123",
+}
+###
+
+### Verify a user
+POST  http://localhost:3010/users/verify/0194039f-93ac-761c-8974-820c428aabc0
+Content-Type: application/json
+
+{
+    "code": 2853
 }
 
 ###
@@ -45,5 +53,5 @@ Content-Type: application/json
 ###
 
 ### Delete a user by ID
-DELETE http://localhost:3010/users/0193f43f-3b1e-76ec-bdf8-fefa5c3c6ff7
+DELETE  http://localhost:3010/users/0194036f-65c8-72a0-bd95-b56b1989444a
 Content-Type: application/json
