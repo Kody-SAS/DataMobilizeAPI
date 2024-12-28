@@ -3,10 +3,11 @@ import reportController from "../controllers/report.controller";
 
 export const ReportRoute = () => {
   const router = Router();
-  router.get(`users/:userid/reports/:id`, reportController.findOne);
-  router.get(`/users/:userid/reports`, reportController.findAll);
-  router.post(`/users/:userid/reports`, reportController.create);
-  router.delete(`users/:userid/reports/:id`, reportController.deleteOne);
-  router.patch(`/users/:userid/reports/:id`, reportController.updateOne);
+  const prefix: string = "/reports";
+  router.get(`${prefix}/:id`, reportController.findOne);
+  router.get(`${prefix}`, reportController.findAll);
+  router.post(`${prefix}`, reportController.create);
+  router.delete(`${prefix}/:id`, reportController.deleteOne);
+  router.put(`${prefix}/id`, reportController.updateOne);
   return router;
 };

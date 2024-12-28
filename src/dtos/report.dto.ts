@@ -1,8 +1,8 @@
 export type Report = {
   id?: string;
   description: string;
-  type: any;
   localisation: string;
-  media: any;
+  issueType: string;
+  // media: any;
   userId: string;
 };

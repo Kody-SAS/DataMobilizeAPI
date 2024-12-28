@@ -15,7 +15,7 @@ export const transformData = (data) => {
       user.reports.push({
         id: reports.id,
         description: reports.description || "",
-        type: reports.type || "",
+        issueType: reports.issueType || "",
         localisation: reports.localisation || "",
       });
     }
