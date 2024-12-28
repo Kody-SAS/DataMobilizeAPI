@@ -17,9 +17,9 @@ export const reports = pgTable("reports", {
     .notNull()
     .unique(),
   description: text("description"),
-  type: issueTypeEnum("issueType").notNull(),
   localisation: varchar("localisation", { length: 255 }).notNull(),
-  media: jsonb("media").notNull(),
+  issueType: text("issueType"),
+  // media: jsonb("media").notNull(),
   userId: text("userId").references(() => users.id),
   ...timestamps,
 });

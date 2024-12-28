@@ -1,0 +1,15 @@
+### Create a new report
+POST http://localhost:3010/reports
+Content-Type: application/json
+
+{
+    "description": "Report description..",
+    "userId": "01940bbb-6866-7709-9fe8-d2ef857c65b7",
+    "media": "helloworld",
+    "issueType": "Audit",
+    "localisation": "NGOA"
+}
+
+### Get all reports
+GET http://localhost:3010/reports
+Content-Type: application/json

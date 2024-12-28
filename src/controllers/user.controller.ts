@@ -3,7 +3,7 @@ import * as bcrypt from "bcryptjs";
 import { CreateUserInput, User } from "../dtos/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
-import { ERROR_CODE } from "../utils/error_code";
+import { STATUS_CODE } from "../utils/error_code";
 import i18next, { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { Verification } from "../dtos/verification.dto";
@@ -59,7 +59,7 @@ const register = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.log("Failed to register user with error: " + error);
-    return res.status(ERROR_CODE.SERVER_ERROR).json(error);
+    return res.status(STATUS_CODE.SERVER_ERROR).json(error);
   }
 };
 
@@ -68,7 +68,7 @@ const login = async (req: Request, res: Response) => {
     const user = await userService.getByEmail(req.body.email);
     if (!user) {
       return res
-        .status(ERROR_CODE.USER_NOT_FOUND)
+        .status(STATUS_CODE.USER_NOT_FOUND)
         .json({ message: "Login failed" });
     }
     const isMatch: boolean = bcrypt.compareSync(
@@ -77,7 +77,7 @@ const login = async (req: Request, res: Response) => {
     );
     if (!isMatch) {
       return res
-        .status(ERROR_CODE.USER_INCORRECT_PASSWORD)
+        .status(STATUS_CODE.USER_INCORRECT_PASSWORD)
         .json({ message: "Login failed" });
     }
     return res.json({
@@ -89,7 +89,7 @@ const login = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
+      .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Login failed" });
   }
 };
@@ -100,39 +100,38 @@ const verify = async (req: Request, res: Response) => {
 
     const verification = await verificationService.getOne(req.params.userId);
 
-    if (verification != null) {
-      if (parseInt(verification.code.toString()) === code) {
-        const user: User = await userService.getOne(req.params.userId);
-
-        // we update the verified user
-        user.isVerified = true;
-
-        const updatedUser = await userService.updateOne(user);
-
-        // delete all user's related codes
-        await verificationService.deleteAllFromUser(req.params.userId);
-
-        return res.status(ERROR_CODE.SUCCESS).json({
-          id: updatedUser.id,
-          username: updatedUser.username,
-          email: updatedUser.email,
-          isVerified: updatedUser.isVerified,
-          localisation: updatedUser.localisation,
-        });
-      } else {
-        return res
-          .status(ERROR_CODE.USER_INCORRECT_CODE)
-          .json({ message: "Verification code incorrect" });
-      }
-    } else {
+    if (!verification) {
       return res
-        .status(ERROR_CODE.NOT_FOUND)
+        .status(STATUS_CODE.NOT_FOUND)
         .json({ message: "Verification code not found" });
     }
+
+    if (parseInt(verification.code.toString(), 10) !== code) {
+      return res
+        .status(STATUS_CODE.USER_INCORRECT_CODE)
+        .json({ message: "Verification code incorrect" });
+    }
+
+    const user: User = await userService.getOne(req.params.userId);
+
+    // Update user verification status
+    user.isVerified = true;
+    const updatedUser = await userService.updateOne(user);
+
+    // Delete all codes related to the user
+    await verificationService.deleteAllFromUser(req.params.userId);
+
+    return res.status(STATUS_CODE.SUCCESS).json({
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      isVerified: updatedUser.isVerified,
+      localisation: updatedUser.localisation,
+    });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
-      .json({ message: "Verification failed" });
+      .status(STATUS_CODE.SERVER_ERROR)
+      .json({ message: "Verification failed", error: error.message });
   }
 };
 
@@ -142,7 +141,7 @@ const findAll = async (req: Request, res: Response) => {
     return res.json({ users });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
+      .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Login failed" });
   }
 };
@@ -153,7 +152,7 @@ const findOne = async (req: Request, res: Response) => {
     return res.json({ user });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
+      .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Login failed" });
   }
 };
@@ -164,7 +163,7 @@ const removeOne = async (req: Request, res: Response) => {
     return res.json({ message: "User deleted" });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
+      .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Failed to delete user: " + req.params.id });
   }
 };
@@ -182,7 +181,7 @@ const updateOne = async (req: Request, res: Response) => {
     });
   } catch (error) {
     return res
-      .status(ERROR_CODE.SERVER_ERROR)
+      .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Failed to update user: " + req.body.id });
   }
 };
