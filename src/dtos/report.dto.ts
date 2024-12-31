@@ -2,7 +2,8 @@ export type Report = {
   id?: string;
   description: string;
   localisation: string;
-  issueType: string;
-  // media: any;
+  roadType: string;
+  category: string;
+  photos: any;
   userId: string;
 };

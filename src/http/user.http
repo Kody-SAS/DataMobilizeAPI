@@ -18,7 +18,7 @@ Content-Type: application/json
     "username": "Abba Sali Aboubakar Mamate",
     "email": "abbasaliaboubakar@gmail.com",
     "password": "password123",
-    "localisation": "en"
+    "localisation": "fr"
 }
 
 ### Login a new user

@@ -146,6 +146,17 @@ const findAll = async (req: Request, res: Response) => {
   }
 };
 
+const findAllWithReport = async (req: Request, res: Response) => {
+  try {
+    const users = await userService.getUsersWithReports();
+    return res.json({ users });
+  } catch (error) {
+    return res
+      .status(STATUS_CODE.SERVER_ERROR)
+      .json({ message: "Login failed" });
+  }
+};
+
 const findOne = async (req: Request, res: Response) => {
   try {
     const user = await userService.getOne(req.params.id);
@@ -194,4 +205,5 @@ export default {
   verify,
   removeOne,
   updateOne,
+  findAllWithReport,
 };

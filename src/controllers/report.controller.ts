@@ -5,13 +5,20 @@ import reportService from "../services/report.service";
 import userService from "../services/user.service";
 
 /**
- *
+ * Creates a new report
  * @param req - Request
  * @param res - Response
- * @returns Created a report
+ * @returns Created report object or error message
  */
 const create = async (req: Request, res: Response) => {
-  const { description, localisation, issueType, userId }: Report = req.body;
+  const {
+    description,
+    localisation,
+    category,
+    photos,
+    roadType,
+    userId,
+  }: Report = req.body;
   try {
     const user = await userService.getOne(userId);
     if (!user) {
@@ -22,7 +29,9 @@ const create = async (req: Request, res: Response) => {
     const report = await reportService.create({
       localisation,
       description,
-      issueType,
+      category,
+      photos,
+      roadType,
       userId: user.id,
     });
     return res.json({ report });
@@ -32,10 +41,10 @@ const create = async (req: Request, res: Response) => {
 };
 
 /**
- *
+ * Retrieves all reports
  * @param req - Request
  * @param res - Response
- * @returns Get all reports
+ * @returns List of all reports or error message
  */
 const findAll = async (req: Request, res: Response) => {
   try {
@@ -47,10 +56,10 @@ const findAll = async (req: Request, res: Response) => {
 };
 
 /**
- *
+ * Retrieves a single report by ID
  * @param req - Request
  * @param res - Response
- * @returns Get one report
+ * @returns Report object or error message
  */
 const findOne = async (req: Request, res: Response) => {
   try {
@@ -62,10 +71,10 @@ const findOne = async (req: Request, res: Response) => {
 };
 
 /**
- *
+ * Deletes a report by ID
  * @param req - Request
  * @param res - Response
- * @returns  Delete one report
+ * @returns Success message or error message
  */
 const deleteOne = async (req: Request, res: Response) => {
   try {
@@ -77,18 +86,21 @@ const deleteOne = async (req: Request, res: Response) => {
 };
 
 /**
- *
+ * Updates an existing report and returns the updated report
  * @param req - Request
  * @param res - Response
- * @returns Update a report
+ * @returns Updated report object or error message
  */
 const updateOne = async (req: Request, res: Response) => {
-  const { description, localisation, issueType }: Report = req.body;
+  const { description, localisation, category, photos, roadType }: Report =
+    req.body;
   try {
     const report = await reportService.updateReport(req.params.id, {
       description,
       localisation,
-      issueType,
+      category,
+      photos,
+      roadType,
       userId: req.params.userId,
     });
     return res.json(report);

@@ -43,6 +43,13 @@
       "when": 1733770908543,
       "tag": "0005_sharp_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1735657916290,
+      "tag": "0006_wild_slipstream",
+      "breakpoints": true
     }
   ]
 }
