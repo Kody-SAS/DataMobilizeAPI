@@ -6,19 +6,76 @@ import { verifications } from "../db/schema/verification.schema";
 import { reports } from "../db/schema/report.schema";
 import { transformData } from "../utils/helper";
 
+/**
+ * Retrieves all users with their reports
+ * @returns List of users with their reports
+ */
 const getAll = async () => {
-  const res = await db
-    .select()
-    .from(users)
-    .leftJoin(reports, eq(reports.userId, users.id));
-  return transformData(res);
+  return await db.select().from(users);
 };
 
+/**
+ * Retrieves all users with their associated reports
+ * @returns List of users with their reports
+ */
+const getUsersWithReports = async () => {
+  const res = await db
+    .select({
+      userId: users.id,
+      email: users.email,
+      username: users.username,
+      reportId: reports.id,
+      reportDescription: reports.description,
+      reportLocalisation: reports.localisation,
+      reportRoadType: reports.roadType,
+      reportCategory: reports.category,
+      reportPhotos: reports.photos,
+    })
+    .from(users)
+    .leftJoin(reports, eq(reports.userId, users.id));
+
+  const usersMap = new Map<string, any>();
+
+  res.forEach((row) => {
+    if (!usersMap.has(row.userId)) {
+      usersMap.set(row.userId, {
+        id: row.userId,
+        email: row.email,
+        username: row.username,
+        reports: [],
+      });
+    }
+
+    if (row.reportId) {
+      usersMap.get(row.userId).reports.push({
+        id: row.reportId,
+        description: row.reportDescription,
+        localisation: row.reportLocalisation,
+        roadType: row.reportRoadType,
+        category: row.reportCategory,
+        photos: row.reportPhotos,
+      });
+    }
+  });
+
+  return Array.from(usersMap.values());
+};
+
+/**
+ * Retrieves a single user by ID
+ * @param id - User ID
+ * @returns User object or null if not found
+ */
 const getOne = async (id: string): Promise<User> => {
   const user = await db.select().from(users).where(eq(users.id, id));
   return user.length > 0 ? user[0] : null;
 };
 
+/**
+ * Retrieves a single user by username
+ * @param username - Username
+ * @returns User object or null if not found
+ */
 const getByUsername = async (username: string) => {
   const user = await db
     .select()
@@ -38,9 +95,9 @@ const create = async (input: CreateUserInput): Promise<User> => {
 };
 
 /**
- * Updates an existing user and returns the new one
- * @param user User - data content to replace user with
- * @returns Updated user
+ * Updates an existing user and returns the updated user
+ * @param user - User data to update
+ * @returns Updated user object or null if not found
  */
 const updateOne = async (user: User): Promise<User> => {
   const resp = await db
@@ -51,6 +108,10 @@ const updateOne = async (user: User): Promise<User> => {
   return resp.length > 0 ? resp[0] : null;
 };
 
+/**
+ * Deletes a user by ID
+ * @param id - User ID
+ */
 const deleteOne = async (id: string) => {
   // remove all verification codes from user
   await db.delete(verifications).where(eq(verifications.userId, id));
@@ -67,4 +128,5 @@ export default {
   getByEmail,
   updateOne,
   deleteOne,
+  getUsersWithReports,
 };

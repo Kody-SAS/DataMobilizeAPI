@@ -5,6 +5,7 @@ export const UserRoute = () => {
   const router = Router();
   const prefix: string = "/users";
   router.get(`${prefix}`, userController.findAll);
+  router.get(`${prefix}/reports`, userController.findAllWithReport);
   router.get(`${prefix}/:id`, userController.findOne);
   router.post(`${prefix}/register`, userController.register);
   router.post(`${prefix}/login`, userController.login);

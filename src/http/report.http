@@ -4,12 +4,48 @@ Content-Type: application/json
 
 {
     "description": "Report description..",
-    "userId": "01940bbb-6866-7709-9fe8-d2ef857c65b7",
-    "media": "helloworld",
-    "issueType": "Audit",
-    "localisation": "NGOA"
+    "localisation": "NGOA",
+    "category": "construction",
+    "photos": [
+        {
+            "url": "http://example.com/photo1.jpg",
+            "type": "image"
+        },
+        {
+            "url": "http://example.com/photo2.jpg",
+            "type": "image"
+        }
+    ],
+    "roadType": "street",
+    "userId": "01940bbb-6866-7709-9fe8-d2ef857c65b7"
 }
 
 ### Get all reports
 GET http://localhost:3010/reports
+Content-Type: application/json
+
+### Get a single report by ID
+GET http://localhost:3010/reports/1
+Content-Type: application/json
+
+### Update a report by ID
+PUT http://localhost:3010/reports/1
+Content-Type: application/json
+
+{
+    "description": "Updated report description..",
+    "localisation": "Updated NGOA",
+    "category": "accident",
+    "photos": [
+        {
+            "url": "http://example.com/photo1.jpg",
+            "type": "image"
+        }
+    ],
+    "roadType": "highway",
+    "userId": "01940bbb-6866-7709-9fe8-d2ef857c65b7"
+}
+
+### Delete a report by ID
+DELETE http://localhost:3010/reports/1
 Content-Type: application/json

@@ -8,6 +8,6 @@ export const ReportRoute = () => {
   router.get(`${prefix}`, reportController.findAll);
   router.post(`${prefix}`, reportController.create);
   router.delete(`${prefix}/:id`, reportController.deleteOne);
-  router.put(`${prefix}/id`, reportController.updateOne);
+  router.put(`${prefix}/:id`, reportController.updateOne);
   return router;
 };
