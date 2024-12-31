@@ -5,7 +5,7 @@ Content-Type: application/json
 {
     "description": "Report description..",
     "localisation": "NGOA",
-    "category": "construction",
+    "category": "Audit11",
     "photos": [
         {
             "url": "http://example.com/photo1.jpg",
@@ -16,8 +16,8 @@ Content-Type: application/json
             "type": "image"
         }
     ],
-    "roadType": "street",
-    "userId": "01940bbb-6866-7709-9fe8-d2ef857c65b7"
+    "roadType": "Bridge",
+    "userId": "01941da6-109b-7369-86a5-c8f18135a0b4"
 }
 
 ### Get all reports

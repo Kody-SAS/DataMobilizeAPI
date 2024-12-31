@@ -32,11 +32,11 @@ Content-Type: application/json
 ###
 
 ### Verify a user
-POST  http://localhost:3010/users/verify/01940bbb-6866-7709-9fe8-d2ef857c65b7
+POST  http://localhost:3010/users/verify/01941da6-109b-7369-86a5-c8f18135a0b4
 Content-Type: application/json
 
 {
-    "code": 4891
+    "code": 8667
 }
 
 ###
@@ -59,4 +59,8 @@ Content-Type: application/json
 
 ### Get all users
 GET http://localhost:3010/users
+Content-Type: application/json
+
+### Get all users with reports
+GET http://localhost:3010/users/reports
 Content-Type: application/json

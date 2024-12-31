@@ -1,0 +1,29 @@
+### Create a new road type
+POST http://localhost:3010/roads
+Content-Type: application/json
+
+{
+    "name": "Main Street",
+    "roadType": "Section"
+}
+
+### Get all road types
+GET http://localhost:3010/roads
+Content-Type: application/json
+
+### Get a single road type by ID
+GET http://localhost:3010/roads/1
+Content-Type: application/json
+
+### Update a road type by ID
+PUT http://localhost:3010/roads/1
+Content-Type: application/json
+
+{
+    "name": "Updated Main Street",
+    "roadType": "Intersection"
+}
+
+### Delete a road type by ID
+DELETE http://localhost:3010/roads/1
+Content-Type: application/json
