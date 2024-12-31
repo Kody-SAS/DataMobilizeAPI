@@ -9,7 +9,11 @@ import { db } from "../utils/db";
  * @returns Created road object or null if creation failed
  */
 const create = async (road: Road): Promise<Road | null> => {
-  const response = await db.insert(roads).values(road).returning();
+  const response = await db
+    .insert(roads)
+    .values(road)
+    .onConflictDoNothing()
+    .returning();
   return response.length > 0 ? response[0] : null;
 };
 
