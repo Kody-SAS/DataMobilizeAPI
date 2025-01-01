@@ -50,6 +50,13 @@
       "when": 1735657916290,
       "tag": "0006_wild_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1735721685870,
+      "tag": "0007_small_argent",
+      "breakpoints": true
     }
   ]
 }
