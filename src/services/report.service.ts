@@ -9,40 +9,7 @@ import { db } from "../utils/db";
  * @returns Created report object or null if creation failed
  */
 const create = async (report: Report) => {
-  const response = await db
-    .insert(reports)
-    .values({
-      ...report,
-      category: ([
-        "Other",
-        "Safety Perception",
-        "Crash Reporting",
-        "Infrastructure Issue",
-        "Audit",
-      ].includes(report.category)
-        ? report.category
-        : "Other") as
-        | "Other"
-        | "Safety Perception"
-        | "Crash Reporting"
-        | "Infrastructure Issue"
-        | "Audit",
-      roadType: ([
-        "Section",
-        "Intersection",
-        "Station",
-        "Bridge",
-        "Other",
-      ].includes(report.roadType)
-        ? report.roadType
-        : "Other") as
-        | "Section"
-        | "Intersection"
-        | "Station"
-        | "Bridge"
-        | "Other",
-    })
-    .returning();
+  const response = await db.insert(reports).values(report).returning();
   return response.length > 0 ? response[0] : null;
 };
 
@@ -81,37 +48,7 @@ const deleteReport = async (id: string): Promise<void> => {
 const updateReport = async (id: string, report: Report) => {
   const response = await db
     .update(reports)
-    .set({
-      ...report,
-      category: ([
-        "Other",
-        "Safety Perception",
-        "Crash Reporting",
-        "Infrastructure Issue",
-        "Audit",
-      ].includes(report.category)
-        ? report.category
-        : "Other") as
-        | "Other"
-        | "Safety Perception"
-        | "Crash Reporting"
-        | "Infrastructure Issue"
-        | "Audit",
-      roadType: ([
-        "Section",
-        "Intersection",
-        "Station",
-        "Bridge",
-        "Other",
-      ].includes(report.roadType)
-        ? report.roadType
-        : "Other") as
-        | "Section"
-        | "Intersection"
-        | "Station"
-        | "Bridge"
-        | "Other",
-    })
+    .set(report)
     .where(eq(reports.id, id))
     .returning();
   return response.length > 0 ? response[0] : null;
