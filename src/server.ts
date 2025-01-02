@@ -14,6 +14,7 @@ import en from "./locales/en/translation.json";
 import fr from "./locales/fr/translation.json";
 import { ReportRoute } from "./routes/report.route";
 import { RoadTypeRoute } from "./routes/roadType.route";
+import { IncidentRoute } from "./routes/incident.route";
 
 // setup i18next
 i18next
@@ -47,5 +48,6 @@ export const setupRestEndPoint = (app: Application) => {
   app.use("/", UserRoute());
   app.use("/", ReportRoute());
   app.use("/", RoadTypeRoute());
+  app.use("/", IncidentRoute());
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 };

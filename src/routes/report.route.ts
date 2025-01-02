@@ -6,6 +6,7 @@ export const ReportRoute = () => {
   const prefix: string = "/reports";
   router.get(`${prefix}/:id`, reportController.findOne);
   router.get(`${prefix}`, reportController.findAll);
+  router.get(`${prefix}/incidents`, reportController.findAllWithIncident);
   router.post(`${prefix}`, reportController.create);
   router.delete(`${prefix}/:id`, reportController.deleteOne);
   router.put(`${prefix}/:id`, reportController.updateOne);

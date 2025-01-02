@@ -50,6 +50,13 @@
       "when": 1735657916290,
       "tag": "0006_wild_slipstream",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1735729557428,
+      "tag": "0007_marvelous_network",
+      "breakpoints": true
     }
   ]
 }
