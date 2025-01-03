@@ -92,8 +92,14 @@ const deleteOne = async (req: Request, res: Response) => {
  * @returns Updated report object or error message
  */
 const updateOne = async (req: Request, res: Response) => {
-  const { description, localisation, category, photos, roadType }: Report =
-    req.body;
+  const {
+    description,
+    localisation,
+    category,
+    photos,
+    roadType,
+    userId,
+  }: Report = req.body;
   try {
     const report = await reportService.updateReport(req.params.id, {
       description,
@@ -101,7 +107,7 @@ const updateOne = async (req: Request, res: Response) => {
       category,
       photos,
       roadType,
-      userId: req.params.userId,
+      userId,
     });
     return res.json(report);
   } catch (error) {
@@ -109,4 +115,20 @@ const updateOne = async (req: Request, res: Response) => {
   }
 };
 
-export default { create, findOne, findAll, deleteOne, updateOne };
+const findAllWithIncident = async (req: Request, res: Response) => {
+  try {
+    const reports = await reportService.getReportsWithIncidents();
+    return res.json({ reports });
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).json({ message: "failed" });
+  }
+};
+
+export default {
+  create,
+  findOne,
+  findAll,
+  deleteOne,
+  updateOne,
+  findAllWithIncident,
+};

@@ -1,0 +1,29 @@
+### Create a new incident
+POST http://localhost:3010/incidents
+Content-Type: application/json
+
+{
+    "description": "Incident description..",
+    "reportId": "01940bbb-6866-7709-9fe8-d2ef857c65b7"
+}
+
+### Get all incidents
+GET http://localhost:3010/incidents
+Content-Type: application/json
+
+### Get a single incident by ID
+GET http://localhost:3010/incidents/1
+Content-Type: application/json
+
+### Update an incident by ID
+PUT http://localhost:3010/incidents/1
+Content-Type: application/json
+
+{
+    "description": "Updated incident description..",
+    "reportId": "01940bbb-6866-7709-9fe8-d2ef857c65b7"
+}
+
+### Delete an incident by ID
+DELETE http://localhost:3010/incidents/1
+Content-Type: application/json

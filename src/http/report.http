@@ -17,7 +17,7 @@ Content-Type: application/json
         }
     ],
     "roadType": "Bridge",
-    "userId": "01941da6-109b-7369-86a5-c8f18135a0b4"
+    "userId": "01942190-0362-714e-bc6a-d9b114f22022"
 }
 
 ### Get all reports
@@ -25,11 +25,15 @@ GET http://localhost:3010/reports
 Content-Type: application/json
 
 ### Get a single report by ID
-GET http://localhost:3010/reports/1
+GET http://localhost:3010/reports/01942191-72a6-763c-ace3-66c84bc7f5ff
+Content-Type: application/json
+
+### Get all reports with incidents
+GET http://localhost:3010/reports/incidents
 Content-Type: application/json
 
 ### Update a report by ID
-PUT http://localhost:3010/reports/1
+PUT http://localhost:3010/reports/01942191-72a6-763c-ace3-66c84bc7f5ff
 Content-Type: application/json
 
 {

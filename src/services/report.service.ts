@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { reports } from "../db/schema/report.schema";
 import { Report } from "../dtos/report.dto";
 import { db } from "../utils/db";
+import { incidents } from "../db/schema/incident.schema";
 
 /**
  * Creates a new report
@@ -54,4 +55,58 @@ const updateReport = async (id: string, report: Report) => {
   return response.length > 0 ? response[0] : null;
 };
 
-export default { create, getOne, getAll, deleteReport, updateReport };
+/**
+ * Retrieves all reports with their associated incidents
+ * @returns List of reports with their incidents
+ */
+const getReportsWithIncidents = async () => {
+  const res = await db
+    .select({
+      reportId: reports.id,
+      description: reports.description,
+      localisation: reports.localisation,
+      roadType: reports.roadType,
+      category: reports.category,
+      photos: reports.photos,
+      userId: reports.userId,
+      incidentId: incidents.id,
+      incidentDescription: incidents.description,
+    })
+    .from(reports)
+    .leftJoin(incidents, eq(incidents.reportId, reports.id));
+
+  const reportsMap = new Map<string, any>();
+
+  res.forEach((row) => {
+    if (!reportsMap.has(row.reportId)) {
+      reportsMap.set(row.reportId, {
+        id: row.reportId,
+        description: row.description,
+        localisation: row.localisation,
+        roadType: row.roadType,
+        category: row.category,
+        photos: row.photos,
+        userId: row.userId,
+        incidents: [],
+      });
+    }
+
+    if (row.incidentId) {
+      reportsMap.get(row.reportId).incidents.push({
+        id: row.incidentId,
+        description: row.incidentDescription,
+      });
+    }
+  });
+
+  return Array.from(reportsMap.values());
+};
+
+export default {
+  create,
+  getOne,
+  getAll,
+  deleteReport,
+  updateReport,
+  getReportsWithIncidents,
+};
