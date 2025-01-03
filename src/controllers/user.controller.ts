@@ -14,14 +14,25 @@ const register = async (req: Request, res: Response) => {
   const password = bcrypt.hashSync(req.body.password, 10);
 
   try {
-    // Register the user
-    const user = await userService.create({
-      username,
-      email,
-      password,
-      localisation: req.language ?? localisation ?? "fr",
-      isVerified: false,
-    });
+    // we check if user already exists
+    let user = await userService.getByEmail(email);
+    if (user) {
+      if (user.isVerified) {
+        return res
+          .status(STATUS_CODE.BAD_REQUEST)
+          .json({ message: "User already exists and is verified" });
+      }
+    }
+    else {
+      // Register the user
+      user = await userService.create({
+        username,
+        email,
+        password,
+        localisation: req.language ?? localisation ?? "fr",
+        isVerified: false,
+      });
+    }
     console.log("User created: " + user.id);
     req.i18n.changeLanguage(user.localisation);
 
