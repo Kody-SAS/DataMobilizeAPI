@@ -14,6 +14,7 @@ export const STATUS_CODE = {
   USER_INCORRECT_CODE: 300,
 
   // not found resource
+  BAD_REQUEST: 400,
   NOT_FOUND: 404,
 
   // unknown error
