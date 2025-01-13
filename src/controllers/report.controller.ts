@@ -18,6 +18,8 @@ const create = async (req: Request, res: Response) => {
     photos,
     roadType,
     userId,
+    latitude,
+    longitude,
   }: Report = req.body;
   try {
     const user = await userService.getOne(userId);
@@ -32,6 +34,8 @@ const create = async (req: Request, res: Response) => {
       category,
       photos,
       roadType,
+      latitude,
+      longitude,
       userId: user.id,
     });
     return res.json({ report });
@@ -92,8 +96,15 @@ const deleteOne = async (req: Request, res: Response) => {
  * @returns Updated report object or error message
  */
 const updateOne = async (req: Request, res: Response) => {
-  const { description, localisation, category, photos, roadType }: Report =
-    req.body;
+  const {
+    description,
+    localisation,
+    category,
+    photos,
+    roadType,
+    latitude,
+    longitude,
+  }: Report = req.body;
   try {
     const report = await reportService.updateReport(req.params.id, {
       description,
@@ -101,6 +112,8 @@ const updateOne = async (req: Request, res: Response) => {
       category,
       photos,
       roadType,
+      latitude,
+      longitude,
       userId: req.params.userId,
     });
     return res.json(report);
