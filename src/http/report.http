@@ -6,6 +6,8 @@ Content-Type: application/json
     "description": "Report description..",
     "localisation": "NGOA",
     "category": "Audit11",
+    "latitude": 1.2345,
+    "longitude": 1.2345,
     "photos": [
         {
             "url": "http://example.com/photo1.jpg",
@@ -40,6 +42,8 @@ Content-Type: application/json
     "description": "Updated report description..",
     "localisation": "Updated NGOA",
     "category": "accident",
+    "latitude": 1.2345,
+    "longitude": 1.2345,
     "photos": [
         {
             "url": "http://example.com/photo1.jpg",

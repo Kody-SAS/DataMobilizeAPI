@@ -5,5 +5,7 @@ export type Report = {
   roadType: string;
   category: string;
   photos: any;
+  latitude: number;
+  longitude: number;
   userId: string;
 };
