@@ -1,5 +1,5 @@
 ### Create a new road type
-POST http://localhost:3010/roads
+POST http://localhost:3010/road-types
 Content-Type: application/json
 
 {
@@ -8,15 +8,15 @@ Content-Type: application/json
 }
 
 ### Get all road types
-GET http://localhost:3010/roads
+GET http://localhost:3010/road-types
 Content-Type: application/json
 
 ### Get a single road type by ID
-GET http://localhost:3010/roads/1
+GET http://localhost:3010/road-types/01941e2f-1b66-7438-9e36-b74a37f1711d
 Content-Type: application/json
 
 ### Update a road type by ID
-PUT http://localhost:3010/roads/1
+PUT http://localhost:3010/road-types/01941e2f-1b66-7438-9e36-b74a37f1711d
 Content-Type: application/json
 
 {
@@ -25,5 +25,5 @@ Content-Type: application/json
 }
 
 ### Delete a road type by ID
-DELETE http://localhost:3010/roads/1
+DELETE http://localhost:3010/road-types/01941e2f-590e-728b-95a3-9156ee814c45
 Content-Type: application/json

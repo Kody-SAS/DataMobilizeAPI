@@ -122,4 +122,20 @@ const updateOne = async (req: Request, res: Response) => {
   }
 };
 
-export default { create, findOne, findAll, deleteOne, updateOne };
+const findAllWithIncident = async (req: Request, res: Response) => {
+  try {
+    const reports = await reportService.getReportsWithIncidents();
+    return res.json({ reports });
+  } catch (error) {
+    return res.status(STATUS_CODE.SERVER_ERROR).json({ message: "failed" });
+  }
+};
+
+export default {
+  create,
+  findOne,
+  findAll,
+  deleteOne,
+  updateOne,
+  findAllWithIncident,
+};
