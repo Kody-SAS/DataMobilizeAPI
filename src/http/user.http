@@ -32,11 +32,11 @@ Content-Type: application/json
 ###
 
 ### Verify a user
-POST  http://localhost:3010/users/verify/01942190-0362-714e-bc6a-d9b114f22022
+POST  http://localhost:3010/users/verify/01946483-6860-77fd-b53c-6894533b709b
 Content-Type: application/json
 
 {
-    "code": 5244
+    "code": 2334
 }
 
 ###
@@ -64,3 +64,13 @@ Content-Type: application/json
 ### Get all users with reports
 GET http://localhost:3010/users/reports
 Content-Type: application/json
+
+
+
+### Update a user token by ID
+PUT  http://localhost:3010/users/01946483-6860-77fd-b53c-6894533b709b/push-token
+Content-Type: application/json
+
+{
+    "token": "token-blabla"
+}

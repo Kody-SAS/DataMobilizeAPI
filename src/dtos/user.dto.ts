@@ -4,6 +4,7 @@ export type CreateUserInput = {
   password: string;
   localisation: string;
   isVerified: boolean;
+  expoPushToken: string;
 };
 
 export type User = {
@@ -12,6 +13,7 @@ export type User = {
   email: string;
   password: string;
   localisation: string;
+  expoPushToken: string;
   isVerified: boolean;
   updated_at: Date;
   created_at: Date;

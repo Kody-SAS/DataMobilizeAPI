@@ -1,1 +1,0 @@
-ALTER TABLE "verifications" ALTER COLUMN "userId" SET NOT NULL;
