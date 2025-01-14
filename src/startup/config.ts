@@ -11,7 +11,6 @@ export const PORT = process.env.PORT;
 export const DATABASE = process.env.DATABASE;
 export const HOST = process.env.HOST;
 
-
 // email client
 export const EMAIL_API_KEY = process.env.BREVO_API_KEY;
 export const EMAIL_API_URL = process.env.BREVO_API_URL;
@@ -19,12 +18,15 @@ export const EMAIL_API_URL = process.env.BREVO_API_URL;
 // kody
 export const KODY_NOREPLY_EMAIL = process.env.KODY_NOREPLY_EMAIL;
 
+// notification
+export const API_NOTIFICATION_URL = process.env.API_NOTIFICATION_URL;
+
 // http clients
 export const emailHttpClient = axios.create({
-    baseURL: EMAIL_API_URL,
-    headers: {
-        'api-key': EMAIL_API_KEY,
-        'content-type': 'application/json',
-        'accept': 'application/json'
-    }
-})
+  baseURL: EMAIL_API_URL,
+  headers: {
+    "api-key": EMAIL_API_KEY,
+    "content-type": "application/json",
+    accept: "application/json",
+  },
+});

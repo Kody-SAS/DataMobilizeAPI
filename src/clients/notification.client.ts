@@ -1,6 +1,5 @@
 import axios from "axios";
-
-const API_URL = "https://exp.host/--/api/v2/push/send";
+import { API_NOTIFICATION_URL } from "../startup/config";
 
 export const sendNotification = async (
   expoPushToken: string,
@@ -16,7 +15,7 @@ export const sendNotification = async (
     data: data || null,
   };
   try {
-    const response = await axios.post(API_URL, payload, {
+    const response = await axios.post(API_NOTIFICATION_URL, payload, {
       headers: {
         host: "expo.host",
         accept: "application/json",
