@@ -22,14 +22,14 @@ const register = async (req: Request, res: Response) => {
           .status(STATUS_CODE.BAD_REQUEST)
           .json({ message: "User already exists and is verified" });
       }
-    }
-    else {
+    } else {
       // Register the user
       user = await userService.create({
         username,
         email,
         password,
         localisation: req.language ?? localisation ?? "fr",
+        expoPushToken: null,
         isVerified: false,
       });
     }
@@ -208,6 +208,36 @@ const updateOne = async (req: Request, res: Response) => {
   }
 };
 
+const expoPushToken = async (req: Request, res: Response) => {
+  try {
+    const { token }: { token: string } = req.body;
+    const user: User = await userService.getOne(req.params.id);
+
+    if (!user) {
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+
+    // Update user expo token
+    user.expoPushToken = token;
+    const updatedUserExpoToken = await userService.updateOne(user);
+
+    return res.status(STATUS_CODE.SUCCESS).json({
+      id: updatedUserExpoToken.id,
+      username: updatedUserExpoToken.username,
+      email: updatedUserExpoToken.email,
+      isVerified: updatedUserExpoToken.isVerified,
+      expoPushToken: updatedUserExpoToken.expoPushToken,
+      localisation: updatedUserExpoToken.localisation,
+    });
+  } catch (error) {
+    return res
+      .status(STATUS_CODE.SERVER_ERROR)
+      .json({ message: "failed", error: error.message });
+  }
+};
+
 export default {
   register,
   findAll,
@@ -217,4 +247,5 @@ export default {
   removeOne,
   updateOne,
   findAllWithReport,
+  expoPushToken,
 };

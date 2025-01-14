@@ -12,7 +12,7 @@ export const users = pgTable("users", {
   email: varchar("email").unique().notNull(),
   password: varchar("password").notNull(),
   localisation: varchar("localisation", { length: 30 }),
-  // type reports
+  expoPushToken: varchar("expoPushToken"),
   isVerified: boolean("isVerified").default(false),
   ...timestamps,
 });
