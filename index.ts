@@ -3,7 +3,7 @@ import { PORT } from "./src/startup/config";
 import { connectToDatabase } from "./src/startup/database";
 import { setupRestEndPoint } from "./src/server";
 
-const app = express();
+export const app = express();
 connectToDatabase();
 setupRestEndPoint(app);
 

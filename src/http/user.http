@@ -32,11 +32,11 @@ Content-Type: application/json
 ###
 
 ### Verify a user
-POST  http://localhost:3010/users/verify/01946483-6860-77fd-b53c-6894533b709b
+POST  http://localhost:3010/users/verify/0194697b-b580-77cb-b047-62a56594af1c
 Content-Type: application/json
 
 {
-    "code": 2334
+    "code": 6371
 }
 
 ###
