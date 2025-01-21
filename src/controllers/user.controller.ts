@@ -8,6 +8,7 @@ import i18next, { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { Verification } from "../dtos/verification.dto";
 import { sendEmail } from "../clients/email.client";
+import { emailTransaction } from "../dtos/email.dto";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -238,6 +239,81 @@ const expoPushToken = async (req: Request, res: Response) => {
   }
 };
 
+const requestResetPassword = async (req: Request, res: Response) => {
+  try {
+    const {email} = req.body;
+
+    const user = await userService.getByEmail(email);
+    if (!user) {
+      return res
+        .status(STATUS_CODE.USER_NOT_FOUND)
+        .json({ message: "User not found" });
+      
+    }
+
+    const code = Math.floor(Math.random() * 10000);
+    await verificationService.create({userId: user.id, code});
+
+    await sendEmail({
+      to: email,
+      subject: "Password Reset code",
+      htmlContent: `<p>Your password reset code is ${code}</p>`,
+      sender: {
+        name: "Kody Support",
+        email: KODY_NOREPLY_EMAIL
+      }
+    });
+
+    res.status(STATUS_CODE.SUCCESS).json({message: "Password reset code sent successfully"});
+    
+  } catch (error) {
+
+    res.status(STATUS_CODE.SERVER_ERROR).json({message: "Failed to send password reset code", error: error.message});
+    
+  }
+
+}
+
+const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, code, newPassword }: { email: string; code: number; newPassword: string } = req.body;
+
+    // Vérifier si l'utilisateur existe
+    const user = await userService.getByEmail(email);
+    if (!user) {
+      return res
+        .status(STATUS_CODE.USER_NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+
+    // Vérifier le code de réinitialisation
+    const verification = await verificationService.getOne(user.id);
+    if (!verification || verification.code !== code) {
+      return res
+        .status(STATUS_CODE.NOT_FOUND)
+        .json({ message: "invalid verification code" });
+    }
+
+    // Mettre à jour le mot de passe de l'utilisateur
+    const hashedPassword = bcrypt.hashSync(newPassword, 10);
+    user.password = hashedPassword;
+    await userService.updateOne(user);
+
+    // Supprimer tous les codes de vérification liés à l'utilisateur
+    await verificationService.deleteAllFromUser(user.id);
+
+    res.status(STATUS_CODE.SUCCESS).json({
+      message: "Password reset successfully"
+    });
+  } catch (error) {
+    res
+      .status(STATUS_CODE.SERVER_ERROR)
+      .json({ message: "Password reset failed", error: error.message });
+  }
+};
+
+
+
 export default {
   register,
   findAll,
@@ -248,4 +324,6 @@ export default {
   updateOne,
   findAllWithReport,
   expoPushToken,
+  resetPassword,
+  requestResetPassword
 };
