@@ -109,7 +109,7 @@ const login = async (req: Request, res: Response) => {
 
 const verify = async (req: Request, res: Response) => {
   try {
-    const { code }: { code: number } = req.body;
+    const { code }: { code: string } = req.body;
 
     const verification = await verificationService.getOne(req.params.userId);
 
@@ -119,7 +119,7 @@ const verify = async (req: Request, res: Response) => {
         .json({ message: "Verification code not found" });
     }
 
-    if (parseInt(verification.code.toString(), 10) !== code) {
+    if (verification.code.toString() !== code) {
       return res
         .status(STATUS_CODE.USER_INCORRECT_CODE)
         .json({ message: "Verification code incorrect" });
