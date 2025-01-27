@@ -12,6 +12,5 @@ export const UserRoute = () => {
   router.post(`${prefix}/verify/:userId`, userController.verify);
   router.delete(`${prefix}/:id`, userController.removeOne);
   router.put(`${prefix}/:id`, userController.updateOne);
-  router.put(`${prefix}/:id/push-token`, userController.expoPushToken);
   return router;
 };

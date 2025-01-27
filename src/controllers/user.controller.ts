@@ -67,6 +67,7 @@ const register = async (req: Request, res: Response) => {
       email: user.email,
       isVerified: user.isVerified,
       localisation: user.localisation,
+      expoPushToken: null
     });
   } catch (error) {
     console.log("Failed to register user with error: " + error);
@@ -97,6 +98,7 @@ const login = async (req: Request, res: Response) => {
       email: user.email,
       isVerified: user.isVerified,
       localisation: user.localisation,
+      expoPushToken: user.expoPushToken,
     });
   } catch (error) {
     return res
@@ -138,6 +140,7 @@ const verify = async (req: Request, res: Response) => {
       email: updatedUser.email,
       isVerified: updatedUser.isVerified,
       localisation: updatedUser.localisation,
+      expoPushToken: updatedUser.expoPushToken,
     });
   } catch (error) {
     return res
@@ -193,48 +196,27 @@ const removeOne = async (req: Request, res: Response) => {
 const updateOne = async (req: Request, res: Response) => {
   try {
     const user: User = req.body;
-    const updatedUser = await userService.updateOne(user);
-    return res.json({
-      id: updatedUser.id,
-      username: updatedUser.username,
-      email: updatedUser.email,
-      isVerified: updatedUser.isVerified,
-      localisation: updatedUser.localisation,
-    });
-  } catch (error) {
-    return res
-      .status(STATUS_CODE.SERVER_ERROR)
-      .json({ message: "Failed to update user: " + req.body.id });
-  }
-};
+    const storedUser: User = await userService.getOne(req.params.id);
 
-const expoPushToken = async (req: Request, res: Response) => {
-  try {
-    const { token }: { token: string } = req.body;
-    const user: User = await userService.getOne(req.params.id);
-
-    if (!user) {
+    if (!storedUser) {
       return res
         .status(STATUS_CODE.NOT_FOUND)
         .json({ message: "User not found" });
     }
 
-    // Update user expo token
-    user.expoPushToken = token;
-    const updatedUserExpoToken = await userService.updateOne(user);
-
+    const updatedUser = await userService.updateOne(user);
     return res.status(STATUS_CODE.SUCCESS).json({
-      id: updatedUserExpoToken.id,
-      username: updatedUserExpoToken.username,
-      email: updatedUserExpoToken.email,
-      isVerified: updatedUserExpoToken.isVerified,
-      expoPushToken: updatedUserExpoToken.expoPushToken,
-      localisation: updatedUserExpoToken.localisation,
+      id: updatedUser.id,
+      username: updatedUser.username,
+      email: updatedUser.email,
+      isVerified: updatedUser.isVerified,
+      localisation: updatedUser.localisation,
+      expoPushToken: updatedUser.expoPushToken,
     });
   } catch (error) {
     return res
       .status(STATUS_CODE.SERVER_ERROR)
-      .json({ message: "failed", error: error.message });
+      .json({ message: "Failed to update user: " + req.body.id });
   }
 };
 
@@ -247,5 +229,4 @@ export default {
   removeOne,
   updateOne,
   findAllWithReport,
-  expoPushToken,
 };
