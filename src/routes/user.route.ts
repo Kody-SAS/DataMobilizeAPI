@@ -12,5 +12,7 @@ export const UserRoute = () => {
   router.post(`${prefix}/verify/:userId`, userController.verify);
   router.delete(`${prefix}/:id`, userController.removeOne);
   router.put(`${prefix}/:id`, userController.updateOne);
+  router.post("/request-reset-password", userController.requestResetPassword);
+  router.post("/reset-password", userController.resetPassword);
   return router;
 };

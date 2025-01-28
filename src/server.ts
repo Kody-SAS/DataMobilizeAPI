@@ -1,4 +1,5 @@
 import express, { Application } from "express";
+import { setupSwagger } from "../swagger";  // Import the setupSwagger function
 import path from "path";
 
 import { UserRoute } from "./routes/user.route";
