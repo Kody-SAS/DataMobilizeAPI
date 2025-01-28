@@ -232,21 +232,33 @@ const requestResetPassword = async (req: Request, res: Response) => {
         .json({ message: "User not found" });
       
     }
+    req.i18n.changeLanguage(user.localisation);
 
-    const code = Math.floor(Math.random() * 10000);
+    let code = Math.floor(Math.random() * 10000);
+
+    // we make sure the code is 4 digits
+    while (code < 1000) {
+      code = Math.floor(Math.random() * 10000);
+    }
+
     await verificationService.create({userId: user.id, code});
 
     await sendEmail({
-      to: email,
+      to: [{email: user.email, name: user.username}],
       subject: "Password Reset code",
-      htmlContent: `<p>Your password reset code is ${code}</p>`,
+      htmlContent: req.t("passwordResetCodeEmail", {code}),
       sender: {
         name: "Kody Support",
         email: KODY_NOREPLY_EMAIL
       }
     });
 
-    res.status(STATUS_CODE.SUCCESS).json({message: "Password reset code sent successfully"});
+    return res.status(STATUS_CODE.SUCCESS).json({
+      userId: user.id,
+      email: user.email,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
+    });
     
   } catch (error) {
 
@@ -280,6 +292,7 @@ const validCodeForPasswordReset = async (req: Request, res: Response) => {
     // Mettre à jour le mot de passe de l'utilisateur
     return res.status(STATUS_CODE.SUCCESS).json({
       userId: user.id,
+      email: user.email,
       isVerified: user.isVerified,
       localisation: user.localisation,
     });
@@ -303,7 +316,7 @@ const resetPassword = async (req: Request, res: Response) => {
 
     user.password = bcrypt.hashSync(password, 10);
     await userService.updateOne(user);
-
+    c
     return res.status(STATUS_CODE.SUCCESS).json({
       id: user.id,
       username: user.username,
