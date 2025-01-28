@@ -256,12 +256,13 @@ const requestResetPassword = async (req: Request, res: Response) => {
 
 }
 
-const resetPassword = async (req: Request, res: Response) => {
+const validCodeForPasswordReset = async (req: Request, res: Response) => {
   try {
-    const { email, code, newPassword }: { email: string; code: number; newPassword: string } = req.body;
+    const { code }: { code: string, userId: string } = req.body;
+    const userId = req.params.userId;
 
     // Vérifier si l'utilisateur existe
-    const user = await userService.getByEmail(email);
+    const user = await userService.getOne(userId);
     if (!user) {
       return res
         .status(STATUS_CODE.USER_NOT_FOUND)
@@ -270,30 +271,53 @@ const resetPassword = async (req: Request, res: Response) => {
 
     // Vérifier le code de réinitialisation
     const verification = await verificationService.getOne(user.id);
-    if (!verification || verification.code !== code) {
+    if (!verification || verification.code.toString() !== code) {
       return res
         .status(STATUS_CODE.NOT_FOUND)
         .json({ message: "invalid verification code" });
     }
 
     // Mettre à jour le mot de passe de l'utilisateur
-    const hashedPassword = bcrypt.hashSync(newPassword, 10);
-    user.password = hashedPassword;
-    await userService.updateOne(user);
-
-    // Supprimer tous les codes de vérification liés à l'utilisateur
-    await verificationService.deleteAllFromUser(user.id);
-
-    res.status(STATUS_CODE.SUCCESS).json({
-      message: "Password reset successfully"
+    return res.status(STATUS_CODE.SUCCESS).json({
+      userId: user.id,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
     });
   } catch (error) {
     res
       .status(STATUS_CODE.SERVER_ERROR)
-      .json({ message: "Password reset failed", error: error.message });
+      .json({ message: "Code verification failed", error: error.message });
   }
 };
 
+const resetPassword = async (req: Request, res: Response) => {
+  const {password} = req.body;
+  const userId = req.params.userId;
+  try {
+    const user = await userService.getOne(userId);
+    if (!user) {
+      return res
+        .status(STATUS_CODE.USER_NOT_FOUND)
+        .json({ message: "User not found" });
+    }
+
+    user.password = bcrypt.hashSync(password, 10);
+    await userService.updateOne(user);
+
+    return res.status(STATUS_CODE.SUCCESS).json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
+      expoPushToken: user.expoPushToken,
+    });
+  } catch (error) {
+    res
+      .status(STATUS_CODE.SERVER_ERROR)
+      .json({ message: "Failed to reset password", error: error.message });
+  }
+}
 
 
 export default {
@@ -305,6 +329,7 @@ export default {
   removeOne,
   updateOne,
   findAllWithReport,
+  requestResetPassword,
+  validCodeForPasswordReset,
   resetPassword,
-  requestResetPassword
 };
