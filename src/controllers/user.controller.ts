@@ -4,11 +4,10 @@ import { CreateUserInput, User } from "../dtos/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
-import i18next, { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { Verification } from "../dtos/verification.dto";
 import { sendEmail } from "../clients/email.client";
-import { emailTransaction } from "../dtos/email.dto";
+import passport from "passport";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -259,12 +258,10 @@ const requestResetPassword = async (req: Request, res: Response) => {
       localisation: user.localisation,
     });
   } catch (error) {
-    res
-      .status(STATUS_CODE.SERVER_ERROR)
-      .json({
-        message: "Failed to send password reset code",
-        error: error.message,
-      });
+    res.status(STATUS_CODE.SERVER_ERROR).json({
+      message: "Failed to send password reset code",
+      error: error.message,
+    });
   }
 };
 
@@ -331,6 +328,31 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
+/**
+ * Google OAuth2.0 authentication
+ */
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+
+/**
+ * Google OAuth2.0 authentication callback
+ */
+const googleAuthCallback = passport.authenticate("google", {
+  failureRedirect: "/login",
+  successRedirect: "/",
+});
+
+/**
+ * Logout
+ * @param req - Request
+ * @param res - Response
+ */
+const logout = (req: Request, res: Response) => {
+  //   req.logout();
+  //   res.redirect("/");
+};
+
 export default {
   register,
   findAll,
@@ -343,4 +365,7 @@ export default {
   requestResetPassword,
   validCodeForPasswordReset,
   resetPassword,
+  googleAuth,
+  googleAuthCallback,
+  logout,
 };
