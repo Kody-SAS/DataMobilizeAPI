@@ -64,3 +64,7 @@ Content-Type: application/json
 ### Get all users with reports
 GET http://localhost:3010/users/reports
 Content-Type: application/json
+
+### Start OAuth flow
+GET http://localhost:3010/auth/google
+Content-Type: application/json
