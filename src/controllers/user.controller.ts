@@ -4,11 +4,10 @@ import { CreateUserInput, User } from "../dtos/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
-import i18next, { t } from "i18next";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { Verification } from "../dtos/verification.dto";
 import { sendEmail } from "../clients/email.client";
-import { emailTransaction } from "../dtos/email.dto";
+import passport from "passport";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -68,7 +67,7 @@ const register = async (req: Request, res: Response) => {
       email: user.email,
       isVerified: user.isVerified,
       localisation: user.localisation,
-      expoPushToken: null
+      expoPushToken: null,
     });
   } catch (error) {
     console.log("Failed to register user with error: " + error);
@@ -223,14 +222,13 @@ const updateOne = async (req: Request, res: Response) => {
 
 const requestResetPassword = async (req: Request, res: Response) => {
   try {
-    const {email} = req.body;
+    const { email } = req.body;
 
     const user = await userService.getByEmail(email);
     if (!user) {
       return res
         .status(STATUS_CODE.USER_NOT_FOUND)
         .json({ message: "User not found" });
-      
     }
     req.i18n.changeLanguage(user.localisation);
 
@@ -241,16 +239,16 @@ const requestResetPassword = async (req: Request, res: Response) => {
       code = Math.floor(Math.random() * 10000);
     }
 
-    await verificationService.create({userId: user.id, code});
+    await verificationService.create({ userId: user.id, code });
 
     await sendEmail({
-      to: [{email: user.email, name: user.username}],
+      to: [{ email: user.email, name: user.username }],
       subject: "Password Reset code",
-      htmlContent: req.t("passwordResetCodeEmail", {code}),
+      htmlContent: req.t("passwordResetCodeEmail", { code }),
       sender: {
         name: "Kody Support",
-        email: KODY_NOREPLY_EMAIL
-      }
+        email: KODY_NOREPLY_EMAIL,
+      },
     });
 
     return res.status(STATUS_CODE.SUCCESS).json({
@@ -259,18 +257,17 @@ const requestResetPassword = async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       localisation: user.localisation,
     });
-    
   } catch (error) {
-
-    res.status(STATUS_CODE.SERVER_ERROR).json({message: "Failed to send password reset code", error: error.message});
-    
+    res.status(STATUS_CODE.SERVER_ERROR).json({
+      message: "Failed to send password reset code",
+      error: error.message,
+    });
   }
-
-}
+};
 
 const validCodeForPasswordReset = async (req: Request, res: Response) => {
   try {
-    const { code }: { code: string, userId: string } = req.body;
+    const { code }: { code: string; userId: string } = req.body;
     const userId = req.params.userId;
 
     // Vérifier si l'utilisateur existe
@@ -304,7 +301,7 @@ const validCodeForPasswordReset = async (req: Request, res: Response) => {
 };
 
 const resetPassword = async (req: Request, res: Response) => {
-  const {password} = req.body;
+  const { password } = req.body;
   const userId = req.params.userId;
   try {
     const user = await userService.getOne(userId);
@@ -330,8 +327,32 @@ const resetPassword = async (req: Request, res: Response) => {
       .status(STATUS_CODE.SERVER_ERROR)
       .json({ message: "Failed to reset password", error: error.message });
   }
-}
+};
 
+/**
+ * Google OAuth2.0 authentication
+ */
+const googleAuth = passport.authenticate("google", {
+  scope: ["profile", "email"],
+});
+
+/**
+ * Google OAuth2.0 authentication callback
+ */
+const googleAuthCallback = passport.authenticate("google", {
+  failureRedirect: "/login",
+  successRedirect: "/",
+});
+
+/**
+ * Logout
+ * @param req - Request
+ * @param res - Response
+ */
+const logout = (req: Request, res: Response) => {
+  //   req.logout();
+  //   res.redirect("/");
+};
 
 export default {
   register,
@@ -345,4 +366,7 @@ export default {
   requestResetPassword,
   validCodeForPasswordReset,
   resetPassword,
+  googleAuth,
+  googleAuthCallback,
+  logout,
 };
