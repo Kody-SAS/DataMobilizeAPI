@@ -316,7 +316,7 @@ const resetPassword = async (req: Request, res: Response) => {
 
     user.password = bcrypt.hashSync(password, 10);
     await userService.updateOne(user);
-    c
+    
     return res.status(STATUS_CODE.SUCCESS).json({
       id: user.id,
       username: user.username,
