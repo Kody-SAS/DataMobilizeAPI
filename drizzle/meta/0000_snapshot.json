@@ -1,5 +1,5 @@
 {
-  "id": "bfc84c8f-7e48-46bd-ad75-61bd8a159f0f",
+  "id": "36aad20a-1b05-43dd-8a19-471c8b61f3fc",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -263,6 +263,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "google_id": {
+          "name": "google_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
         "email": {
           "name": "email",
           "type": "varchar",
@@ -273,7 +279,7 @@
           "name": "password",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "localisation": {
           "name": "localisation",
