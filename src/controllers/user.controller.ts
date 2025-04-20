@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import * as bcrypt from "bcryptjs";
-import { CreateUserInput, User } from "../dtos/user.dto";
+import { CreateUserInput, User } from "../types/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
 import { KODY_NOREPLY_EMAIL } from "../startup/config";
-import { Verification } from "../dtos/verification.dto";
 import { sendEmail } from "../clients/email.client";
 import passport from "passport";
+import { VerificationInput } from "../types/verification.dto";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -44,7 +44,7 @@ const register = async (req: Request, res: Response) => {
     }
 
     console.log("creating verification code: " + code);
-    const verification: Verification = await verificationService.create({
+    const verification: VerificationInput = await verificationService.create({
       userId: user.id,
       code,
     });
@@ -313,7 +313,7 @@ const resetPassword = async (req: Request, res: Response) => {
 
     user.password = bcrypt.hashSync(password, 10);
     await userService.updateOne(user);
-    
+
     return res.status(STATUS_CODE.SUCCESS).json({
       id: user.id,
       username: user.username,
