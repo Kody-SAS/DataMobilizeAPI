@@ -10,6 +10,8 @@ export const POSTGRES_PORT = process.env.POSTGRES_PORT;
 export const PORT = process.env.PORT;
 export const DATABASE = process.env.DATABASE;
 export const HOST = process.env.HOST;
+export const JWT_SECRET = process.env.JWT_SECRET;
+export const EXPIRESIN = process.env.EXPIRESIN || 10000;
 
 // email client
 export const EMAIL_API_KEY = process.env.BREVO_API_KEY;

@@ -1,5 +1,6 @@
 import { Router } from "express";
 import userController from "../controllers/user.controller";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 export const UserRoute = () => {
   const router = Router();
@@ -28,5 +29,6 @@ export const UserRoute = () => {
     userController.googleAuthCallback
   );
   router.get("/logout", userController.logout);
+  router.get(`${prefix}/profile`, userController.profile);
   return router;
 };

@@ -22,6 +22,13 @@
       "when": 1745144310854,
       "tag": "0002_lonely_vulcan",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1745418670736,
+      "tag": "0003_amused_gabe_jones",
+      "breakpoints": true
     }
   ]
 }

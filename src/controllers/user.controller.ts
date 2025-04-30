@@ -8,6 +8,7 @@ import { KODY_NOREPLY_EMAIL } from "../startup/config";
 import { sendEmail } from "../clients/email.client";
 import passport from "passport";
 import { VerificationInput } from "../types/verification.dto";
+import { generateAuthToken } from "../middleware/generateToken";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -92,6 +93,7 @@ const login = async (req: Request, res: Response) => {
         .status(STATUS_CODE.USER_INCORRECT_PASSWORD)
         .json({ message: "Login failed" });
     }
+    const token = generateAuthToken(user.id);
     return res.json({
       id: user.id,
       username: user.username,
@@ -99,6 +101,7 @@ const login = async (req: Request, res: Response) => {
       isVerified: user.isVerified,
       localisation: user.localisation,
       expoPushToken: user.expoPushToken,
+      token,
     });
   } catch (error) {
     return res
@@ -354,6 +357,15 @@ const logout = (req: Request, res: Response) => {
   //   res.redirect("/");
 };
 
+const profile = async (req: Request, res: Response) => {
+  try {
+    const user = (req as any).user;
+    return res.json({ message: "Hello World 237" });
+  } catch (error: any) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export default {
   register,
   findAll,
@@ -369,4 +381,5 @@ export default {
   googleAuth,
   googleAuthCallback,
   logout,
+  profile,
 };
