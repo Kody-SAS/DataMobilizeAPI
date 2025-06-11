@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "setup": "cp .env.example .env && yarn install && npx drizzle-kit generate && npx drizzle-kit migrate && npx drizzle-kit push && yarn serve",
+    "create-env": "cp .env.example .env",
+    "setup": "yarn install && npx drizzle-kit generate && npx drizzle-kit migrate && npx drizzle-kit push && yarn serve",
     "serve": "nodemon index.ts",
     "test": "jest --watchAll --verbose --coverage",
     "drizzle:migrate": "npx drizzle-kit migrate"
@@ -28,6 +29,7 @@
     "express": "^4.18.2",
     "express-session": "^1.18.1",
     "express-validator": "^6.14.2",
+    "google-auth-library": "^10.0.0",
     "i18next": "^23.16.5",
     "i18next-fs-backend": "^2.3.2",
     "i18next-http-middleware": "^3.6.0",

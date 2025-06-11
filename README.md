@@ -18,6 +18,11 @@ yarn install
 
 - Start Application
 
+If you have no .env or your are yet to run the migrations, run
+```bash
+yarn create-env && yarn setup
+```
+If all is setup, you can run the app with
 ```bash
 yarn serve
 ```

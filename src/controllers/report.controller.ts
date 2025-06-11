@@ -23,8 +23,10 @@ const create = async (req: Request, res: Response) => {
       data,
       userId: user.id,
     });
+    console.log('Report created successfully');
     return res.json({ report });
   } catch (error) {
+    console.error('failted to create report: ', error);
     return res.status(STATUS_CODE.SERVER_ERROR).json(error);
   }
 };
@@ -38,8 +40,10 @@ const create = async (req: Request, res: Response) => {
 const findAll = async (req: Request, res: Response) => {
   try {
     const reports = await reportService.getAll();
+    console.log("sending all reports");
     return res.json({ reports });
   } catch (error) {
+    console.error("failed to get all reports");
     return res.status(STATUS_CODE.SERVER_ERROR).json(error);
   }
 };
