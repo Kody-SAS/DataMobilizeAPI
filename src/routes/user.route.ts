@@ -22,10 +22,14 @@ export const UserRoute = () => {
     userController.validCodeForPasswordReset
   );
   router.put(`${prefix}/:userId/resetpassword`, userController.resetPassword);
-  router.get(`${prefixGoogle}/google`, userController.googleAuth);
-  router.get(
-    `${prefixGoogle}/google/callback`,
-    userController.googleAuthCallback
+  // router.get(`${prefixGoogle}/google`, userController.googleAuth);
+  // router.get(
+  //   `${prefixGoogle}/google/callback`,
+  //   userController.googleAuthCallback
+  // );
+  router.post(
+    `${prefixGoogle}/auth/google`,
+    userController.googleAuth
   );
   router.get("/logout", userController.logout);
   return router;

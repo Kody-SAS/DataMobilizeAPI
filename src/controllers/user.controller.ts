@@ -4,10 +4,11 @@ import { CreateUserInput, User } from "../types/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
-import { KODY_NOREPLY_EMAIL } from "../startup/config";
+import { GOOGLE_WEB_CLIENT, KODY_NOREPLY_EMAIL } from "../startup/config";
 import { sendEmail } from "../clients/email.client";
 import passport from "passport";
 import { VerificationInput } from "../types/verification.dto";
+import { OAuth2Client } from "google-auth-library";
 
 const register = async (req: Request, res: Response) => {
   const { email, localisation, username }: CreateUserInput = req.body;
@@ -329,20 +330,73 @@ const resetPassword = async (req: Request, res: Response) => {
   }
 };
 
-/**
- * Google OAuth2.0 authentication
- */
-const googleAuth = passport.authenticate("google", {
-  scope: ["profile", "email"],
-});
+// /**
+//  * Google OAuth2.0 authentication
+//  */
+// const googleAuth = passport.authenticate("google", {
+//   scope: ["profile", "email"],
+// });
 
-/**
- * Google OAuth2.0 authentication callback
- */
-const googleAuthCallback = passport.authenticate("google", {
-  failureRedirect: "/login",
-  successRedirect: "/",
-});
+// /**
+//  * Google OAuth2.0 authentication callback
+//  */
+// const googleAuthCallback = passport.authenticate("google", {
+//   failureRedirect: "/login",
+//   successRedirect: "/",
+// });
+
+const googleAuth = async (req, res) => {
+  const { idToken } = req.body;
+
+  try {
+    const client = new OAuth2Client(GOOGLE_WEB_CLIENT);
+    const ticket = await client.verifyIdToken({
+      idToken,
+      audience: GOOGLE_WEB_CLIENT,
+    });
+
+    const payload = ticket.getPayload();
+    const userId = payload.sub;
+
+    // we check if user already exists
+    let user = await userService.getByEmail(payload.email);
+    if (user) {
+        return res.json({
+          id: user.id,
+          username: user.username,
+          email: user.email,
+          isVerified: user.isVerified,
+          localisation: user.localisation,
+          expoPushToken: null,
+        });
+    } else {
+      // Register the user
+      user = await userService.create({
+        username: payload.name,
+        email: payload.email,
+        password: "",
+        localisation: req.language ?? payload.locale ?? "fr",
+        expoPushToken: null,
+        isVerified: true,
+      });
+    }
+
+    console.log("User created successfully with google signin: " + user.id);
+    req.i18n.changeLanguage(user.localisation);
+    return res.json({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      isVerified: user.isVerified,
+      localisation: user.localisation,
+      expoPushToken: null,
+    });
+    
+  } catch (error) {
+    console.error('Token verification failed for google auth', error);
+    res.status(401).json({ error: 'Invalid ID token' });
+  }
+}
 
 /**
  * Logout
@@ -367,6 +421,6 @@ export default {
   validCodeForPasswordReset,
   resetPassword,
   googleAuth,
-  googleAuthCallback,
+  // googleAuthCallback,
   logout,
 };
