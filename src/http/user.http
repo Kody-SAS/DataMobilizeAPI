@@ -68,3 +68,7 @@ Content-Type: application/json
 ### Start OAuth flow
 GET http://localhost:3010/auth/google
 Content-Type: application/json
+
+### Get Profile
+GET http://localhost:3010/users/profile
+Content-Type: application/json

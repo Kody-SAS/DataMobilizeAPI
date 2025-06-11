@@ -4,7 +4,8 @@ import { db } from "../utils/db";
 import { CreateUserInput, User } from "../types/user.dto";
 import { verifications } from "../db/schema/verification.schema";
 import { reports } from "../db/schema/report.schema";
-import { transformData } from "../utils/helper";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../startup/config";
 
 /**
  * Retrieves all users with their reports
@@ -112,6 +113,22 @@ const deleteOne = async (id: string) => {
   await db.delete(users).where(eq(users.id, id));
 };
 
+const verifyToken = (token: string): Promise<User> => {
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, JWT_SECRET, async (err, decoded: any) => {
+      if (err) {
+        return reject(err);
+      }
+
+      const user = await getOne(decoded.id);
+      if (!user) {
+        return reject(new Error("User not found"));
+      }
+      resolve(user);
+    });
+  });
+};
+
 export default {
   getOne,
   getAll,
@@ -121,4 +138,5 @@ export default {
   updateOne,
   deleteOne,
   getUsersWithReports,
+  verifyToken,
 };
