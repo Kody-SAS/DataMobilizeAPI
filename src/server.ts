@@ -24,6 +24,7 @@ import {
   SESSION_SECRET,
 } from "./startup/config";
 import userService from "./services/user.service";
+import { PingRoute } from "./routes/ping.route";
 
 // setup i18next
 i18next
@@ -67,5 +68,6 @@ export const setupRestEndPoint = (app: Application) => {
   app.use("/", RoadTypeRoute());
   app.use("/", IncidentRoute());
   app.use("/", CategoryRoute());
+  app.use("/", PingRoute());
   //app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 };
