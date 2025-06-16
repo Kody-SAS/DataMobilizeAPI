@@ -51,14 +51,14 @@ i18next
   });
 
 export const setupRestEndPoint = (app: Application) => {
-  // Session setup
-  app.use(
-    session({
-      secret: SESSION_SECRET,
-      resave: false,
-      saveUninitialized: true,
-    })
-  );
+  // // Session setup
+  // app.use(
+  //   session({
+  //     secret: SESSION_SECRET,
+  //     resave: false,
+  //     saveUninitialized: true,
+  //   })
+  // );
 
   app.use(middleware.handle(i18next));
   app.use(express.json());
