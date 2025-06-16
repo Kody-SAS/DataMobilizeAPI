@@ -18,6 +18,8 @@ yarn install
 
 - Start Application
 
+Set back the url in the drizzle.config.ts file to the development url.
+
 If you have no .env or your are yet to run the migrations, run
 ```bash
 yarn create-env && yarn setup
