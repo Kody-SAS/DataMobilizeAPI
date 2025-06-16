@@ -7,6 +7,8 @@ const app = express();
 connectToDatabase();
 setupRestEndPoint(app);
 
-export const server = app.listen(PORT, () => {
-  console.log(`[SERVER]: running to ${PORT}`);
+const NEW_PORT = PORT || 3010
+
+export const server = app.listen(NEW_PORT, () => {
+  console.log(`[SERVER]: running to ${NEW_PORT}`);
 });
