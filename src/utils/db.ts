@@ -8,6 +8,10 @@ import {
   POSTGRES_USER,
 } from "../startup/config";
 
+console.log("Environment: ", process.env.NODE_ENV);
+
+const sslConfig = process.env.NODE_ENV == 'production' ? true : false;
+
 export const pool = new pg.Pool({
   host: HOST,
   user: POSTGRES_USER,
@@ -15,6 +19,7 @@ export const pool = new pg.Pool({
   database: DATABASE,
   port: parseInt(POSTGRES_PORT) || 5432,
   connectionTimeoutMillis: 10000,
+  ssl: sslConfig
 });
 
 export const db = drizzle(pool);
