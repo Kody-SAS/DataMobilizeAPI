@@ -56,7 +56,7 @@ const register = async (req: Request, res: Response) => {
         username: user.username,
         code: verification.code,
       }),
-      sender: { name: "Kody", email: KODY_NOREPLY_EMAIL },
+      sender: { name: "DataMobilize", email: KODY_NOREPLY_EMAIL },
       to: [{ email: user.email, name: user.username }],
     };
     console.log("Sending email to user: " + user.id);
