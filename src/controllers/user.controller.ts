@@ -6,7 +6,6 @@ import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
 import { GOOGLE_WEB_CLIENT, KODY_NOREPLY_EMAIL } from "../startup/config";
 import { sendEmail } from "../clients/email.client";
-import passport from "passport";
 import { VerificationInput } from "../types/verification.dto";
 import { OAuth2Client } from "google-auth-library";
 
