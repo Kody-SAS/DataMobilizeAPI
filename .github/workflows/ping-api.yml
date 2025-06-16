@@ -1,0 +1,24 @@
+name: Ping API Server
+
+on:
+  schedule:
+    # Runs every 40 seconds. Since we host on render, we don't want the servers to stay idle, we run a ping every 40 seconds to keep them up
+    # Note: Github actions schedule has a minimum of 5 minutes interval for 'workflow_dispatch' and 'repository_dispatch' events
+    # and 1 minute for 'push' and 'pull_request' events.
+    # However, 'schedule' events are designed for less frequent, periodic tasks.
+    # To achieve a 40seconds interval, we will use a loop within the job.
+    - cron: "*/1 * * * *" # this will run every minute and the loop will handle the 40 seconds interval
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API Server
+        env:
+          API_URL: ${{ secrets.API_URL }} # Retrieve the API_URL from the GitHub secrets
+        run: |
+          for i in $(seq 1 15); do # 15 iterations * 40 seconds = 600 seconds = 10 minutes
+                echo "Pinging API at $(date)"
+                curl -s -o /dev/null -w "%{http_code}\n" "$API_URL"
+                sleep 40
+            done
