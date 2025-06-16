@@ -67,5 +67,5 @@ export const setupRestEndPoint = (app: Application) => {
   app.use("/", RoadTypeRoute());
   app.use("/", IncidentRoute());
   app.use("/", CategoryRoute());
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
+  //app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 };
