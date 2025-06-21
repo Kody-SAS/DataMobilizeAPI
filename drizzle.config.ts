@@ -15,8 +15,7 @@ export default defineConfig({
   schema: "./src/db/schema",
   dialect: "postgresql",
   dbCredentials: {
-    //url: `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${POSTGRES_PORT}/${DATABASE}`, // for development
-    url: DATABASE_URL,
+    url: process.env.NODE_ENV == 'production' ? DATABASE_URL : `postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${HOST}:${POSTGRES_PORT}/${DATABASE}`, // for development
   },
   migrations: {
     table: "my-migrations-table", 
