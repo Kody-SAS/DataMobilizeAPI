@@ -1,7 +1,8 @@
 import { config } from "dotenv";
 import axios from "axios";
 
-config();
+const envFile = `.env.${process.env.NODE_ENV || "development"}`;
+config({ path: envFile });
 
 // database
 export const POSTGRES_USER = process.env.POSTGRES_USER;

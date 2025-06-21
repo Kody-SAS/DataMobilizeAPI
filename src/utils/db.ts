@@ -17,9 +17,9 @@ export const pool = new pg.Pool({
   database: DATABASE,
   port: parseInt(POSTGRES_PORT) || 5432,
   connectionTimeoutMillis: 10000,
-  ssl: {
+  ssl: process.env.NODE_ENV == "production" ? {
     rejectUnauthorized: false,
-  }
+  } : false
 });
 
 export const db = drizzle(pool);
