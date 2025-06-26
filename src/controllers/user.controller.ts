@@ -92,6 +92,34 @@ const login = async (req: Request, res: Response) => {
         .status(STATUS_CODE.USER_INCORRECT_PASSWORD)
         .json({ message: "Login failed" });
     }
+
+    if (!user.isVerified) {
+      let code = Math.floor(Math.random() * 10000);
+
+      // we make sure the code is 4 digits
+      while (code < 1000) {
+        code = Math.floor(Math.random() * 10000);
+      }
+
+      console.log("creating verification code: " + code);
+      const verification: VerificationInput = await verificationService.create({
+        userId: user.id,
+        code,
+      });
+
+      const sendSmtpEmail = {
+        subject: req.t("verifySubject"),
+        htmlContent: req.t("verifyEmail", {
+          username: user.username,
+          code: verification.code,
+        }),
+        sender: { name: "DataMobilize", email: KODY_NOREPLY_EMAIL },
+        to: [{ email: user.email, name: user.username }],
+      };
+      console.log("Sending email to user: " + user.id);
+      await sendEmail(sendSmtpEmail);
+    }
+    
     return res.json({
       id: user.id,
       username: user.username,
@@ -156,7 +184,7 @@ const findAll = async (req: Request, res: Response) => {
   } catch (error) {
     return res
       .status(STATUS_CODE.SERVER_ERROR)
-      .json({ message: "Login failed" });
+      .json({ message: "Failed to fetch all users: " + error.message });
   }
 };
 
