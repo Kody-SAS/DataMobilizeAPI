@@ -4,7 +4,7 @@ import { CreateUserInput, User } from "../types/user.dto";
 import userService from "../services/user.service";
 import verificationService from "../services/verification.service";
 import { STATUS_CODE } from "../utils/error_code";
-import { GOOGLE_WEB_CLIENT, KODY_NOREPLY_EMAIL } from "../startup/config";
+import { GOOGLE_ID_CLIENT, KODY_NOREPLY_EMAIL } from "../startup/config";
 import { sendEmail } from "../clients/email.client";
 import { VerificationInput } from "../types/verification.dto";
 import { OAuth2Client } from "google-auth-library";
@@ -376,10 +376,10 @@ const googleAuth = async (req, res) => {
   const { idToken } = req.body;
 
   try {
-    const client = new OAuth2Client(GOOGLE_WEB_CLIENT);
+    const client = new OAuth2Client(GOOGLE_ID_CLIENT);
     const ticket = await client.verifyIdToken({
       idToken,
-      audience: GOOGLE_WEB_CLIENT,
+      audience: GOOGLE_ID_CLIENT,
     });
 
     const payload = ticket.getPayload();

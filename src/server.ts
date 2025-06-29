@@ -17,12 +17,6 @@ import { ReportRoute } from "./routes/report.route";
 import { RoadTypeRoute } from "./routes/roadType.route";
 import { IncidentRoute } from "./routes/incident.route";
 import { CategoryRoute } from "./routes/category.route";
-import {
-  CALLBACK_URL,
-  GOOGLE_CLIENT_ID,
-  GOOGLE_CLIENT_SECRET,
-  SESSION_SECRET,
-} from "./startup/config";
 import userService from "./services/user.service";
 import { PingRoute } from "./routes/ping.route";
 
