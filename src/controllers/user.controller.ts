@@ -373,20 +373,11 @@ const resetPassword = async (req: Request, res: Response) => {
 // });
 
 const googleAuth = async (req, res) => {
-  const { idToken } = req.body;
+  const { name, email } = req.body;
 
   try {
-    const client = new OAuth2Client(GOOGLE_ID_CLIENT);
-    const ticket = await client.verifyIdToken({
-      idToken,
-      audience: GOOGLE_ID_CLIENT,
-    });
-
-    const payload = ticket.getPayload();
-    const userId = payload.sub;
-
     // we check if user already exists
-    let user = await userService.getByEmail(payload.email);
+    let user = await userService.getByEmail(email);
     if (user) {
         return res.json({
           id: user.id,
@@ -399,10 +390,10 @@ const googleAuth = async (req, res) => {
     } else {
       // Register the user
       user = await userService.create({
-        username: payload.name,
-        email: payload.email,
+        username: name,
+        email: email,
         password: "",
-        localisation: req.language ?? payload.locale ?? "fr",
+        localisation: req.language ?? "fr",
         expoPushToken: null,
         isVerified: true,
       });
@@ -420,7 +411,7 @@ const googleAuth = async (req, res) => {
     });
     
   } catch (error) {
-    console.error('Token verification failed for google auth', error);
+    console.error('Failed to add user with google signin: ', error);
     res.status(401).json({ error: 'Invalid ID token' });
   }
 }
