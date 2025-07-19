@@ -4,7 +4,6 @@ import userController from "../controllers/user.controller";
 export const UserRoute = () => {
   const router = Router();
   const prefix: string = "/users";
-  const prefixGoogle: string = "/auth";
   router.get(`${prefix}`, userController.findAll);
   router.get(`${prefix}/reports`, userController.findAllWithReport);
   router.get(`${prefix}/:id`, userController.findOne);
@@ -28,7 +27,7 @@ export const UserRoute = () => {
   //   userController.googleAuthCallback
   // );
   router.post(
-    `${prefixGoogle}/auth/google`,
+    `${prefix}/auth/google`,
     userController.googleAuth
   );
   router.get("/logout", userController.logout);
